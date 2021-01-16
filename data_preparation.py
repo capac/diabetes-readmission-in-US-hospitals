@@ -5,6 +5,8 @@ import numpy as np
 from pathlib import Path
 import os
 from imblearn.over_sampling import SMOTE
+from sklearn.preprocessing import StandardScaler
+
 
 home = os.environ['HOME']
 
@@ -128,13 +130,13 @@ df['primary_diag'] = df['primary_diag'].replace(primary_diag_list, [0, 1, 2, 3, 
 df[['race', 'gender', 'age']] = df[['race', 'gender', 'age']].astype('category')
 
 # making sure caetgory features are such
-new_cat_list = ['max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide',
-                'chlorpropamide', 'glimepiride', 'acetohexamide', 'glipizide', 'glyburide',
-                'tolbutamide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol',
-                'troglitazone', 'tolazamide', 'insulin', 'glyburide-metformin',
-                'glipizide-metformin', 'metformin-pioglitazone', 'change', 'diabetesMed',
-                'readmitted', 'primary_diag']
-df[new_cat_list] = df[new_cat_list].astype('category')
+cat_list = ['max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide',
+            'chlorpropamide', 'glimepiride', 'acetohexamide', 'glipizide', 'glyburide',
+            'tolbutamide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol',
+            'troglitazone', 'tolazamide', 'insulin', 'glyburide-metformin', 'glipizide-metformin',
+            'metformin-pioglitazone', 'change', 'diabetesMed', 'readmitted', 'primary_diag',
+            'admission_type_id', 'discharge_disposition_id', 'admission_source_id']
+df[cat_list] = df[cat_list].astype('category')
 
 # SMOTE: Synthetic Minority Over-sampling Technique
 input_features = list(set(df.columns) - set(['readmitted']))
@@ -143,6 +145,15 @@ sm = SMOTE(random_state=42)
 X_new, y_new = sm.fit_sample(X, y)
 df = pd.concat([X_new, y_new], axis=1)
 
+# standardize numeric data
+scaler_encoder = StandardScaler()
+num_cols = df.select_dtypes('int64').columns
+df_num = df[num_cols]
+X_num = scaler_encoder.fit_transform(df_num)
+df_num = pd.DataFrame(X_num, index=df_num.index, columns=num_cols)
+df_cat = df.drop(num_cols, axis=1)
+df = pd.concat([df_num, df_cat], axis=1)
+
 # saving dataframe to CSV file
-df.to_csv('data/df_encoded.csv')
+df.to_csv('data/df_encoded.csv', index=False)
 print('Done!')
