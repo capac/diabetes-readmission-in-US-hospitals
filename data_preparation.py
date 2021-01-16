@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import os
-from imblearn.over_sampling import SMOTE
+from imblearn.over_sampling import SMOTE, RandomOverSampler
 from sklearn.preprocessing import StandardScaler
 
 
@@ -138,12 +138,18 @@ cat_list = ['max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglini
             'admission_type_id', 'discharge_disposition_id', 'admission_source_id']
 df[cat_list] = df[cat_list].astype('category')
 
+# are there null values?
+# print(f'Null values: \n{df.isnull().any()}')
+
 # SMOTE: Synthetic Minority Over-sampling Technique
 input_features = list(set(df.columns) - set(['readmitted']))
 X, y = df[input_features], df['readmitted']
-sm = SMOTE(random_state=42)
+sm = RandomOverSampler(random_state=42)
 X_new, y_new = sm.fit_sample(X, y)
 df = pd.concat([X_new, y_new], axis=1)
+
+# are there null values?
+# print(f'Null values after SMOTE: \n{df.isnull().any()}')
 
 # standardize numeric data
 scaler_encoder = StandardScaler()
