@@ -133,3 +133,6 @@ dmypy.json
 
 # VSCode settings
 .vscode/
+
+# CSV files
+*.csv
