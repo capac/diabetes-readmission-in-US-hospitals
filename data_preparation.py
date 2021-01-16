@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import os
+from imblearn.over_sampling import SMOTE
 
 home = os.environ['HOME']
 
@@ -134,6 +135,13 @@ new_cat_list = ['max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateg
                 'glipizide-metformin', 'metformin-pioglitazone', 'change', 'diabetesMed',
                 'readmitted', 'primary_diag']
 df[new_cat_list] = df[new_cat_list].astype('category')
+
+# SMOTE: Synthetic Minority Over-sampling Technique
+input_features = list(set(df.columns) - set(['readmitted']))
+X, y = df[input_features], df['readmitted']
+sm = SMOTE(random_state=42)
+X_new, y_new = sm.fit_sample(X, y)
+df = pd.concat([X_new, y_new], axis=1)
 
 # saving dataframe to CSV file
 df.to_csv('data/df_encoded.csv')
