@@ -153,7 +153,7 @@ X_new, y_new = sm.fit_resample(X, y)
 df = pd.concat([X_new, y_new], axis=1)
 
 # are there null values?
-# print(f'Null values after SMOTE: \n{df.isnull().any()}')
+# print(f'Null values after RandomOverSampler: \n{df.isnull().any()}')
 
 # standardize numeric data
 scaler_encoder = StandardScaler()
