@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 from pathlib import Path
 import os
-from imblearn.over_sampling import SMOTE, RandomOverSampler
+from imblearn.over_sampling import RandomOverSampler
 from sklearn.preprocessing import StandardScaler
 
 
@@ -142,10 +142,14 @@ df[cat_list] = df[cat_list].astype('category')
 # print(f'Null values: \n{df.isnull().any()}')
 
 # SMOTE: Synthetic Minority Over-sampling Technique
+# When dealing with mixed data type such as continuous and categorical features,
+# none of the presented methods (apart of the class RandomOverSampler) can deal
+# with the categorical features.
+# https://imbalanced-learn.org/stable/over_sampling.html#smote-variants
 input_features = list(set(df.columns) - set(['readmitted']))
 X, y = df[input_features], df['readmitted']
-sm = RandomOverSampler(random_state=42)
-X_new, y_new = sm.fit_sample(X, y)
+sm = RandomOverSampler(sampling_strategy='minority')
+X_new, y_new = sm.fit_resample(X, y)
 df = pd.concat([X_new, y_new], axis=1)
 
 # are there null values?
