@@ -25,63 +25,77 @@ model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, solver='newto
               'Decision tree classifier': DecisionTreeClassifier(max_depth=16),
               'Random forest classifier': RandomForestClassifier(n_jobs=-1, n_estimators=200)}
 
-# model accuracy
+
 t0 = time()
-y_pred_results = []
-y_pred_proba_results = []
-for name, model in model_dict.items():
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    y_pred_results.append(y_pred)
-    y_pred_proba = model.predict_proba(X_test)
-    y_pred_proba_results.append(y_pred_proba)
-    print(f'Accuracy of the {name.lower()} on test set: {model.score(X_test, y_test):.4f}')
+with open('stats_output.txt', 'w') as f:
+    # model accuracy
+    y_pred_results = []
+    y_pred_proba_results = []
+    print('Calculating accuracy...')
+    for name, model in model_dict.items():
+        model.fit(X_train, y_train)
+        y_pred = model.predict(X_test)
+        y_pred_results.append(y_pred)
+        y_pred_proba = model.predict_proba(X_test)
+        y_pred_proba_results.append(y_pred_proba)
+        f.writelines(f'Accuracy of the {name.lower()} on test set: {model.score(X_test, y_test):.4f}\n')
+    f.writelines('\n')
 
-# mean squared error on test set
-for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
-    mse = mean_squared_error(y_test, y_pred)
-    print(f'Root mean squared error on test set with {name.lower()} model: {np.sqrt(mse):.4f}')
+    # mean squared error on test set
+    print('Calculating RMSE...')
+    for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
+        mse = mean_squared_error(y_test, y_pred)
+        f.writelines(f'RMSE on test set with {name.lower()} model: {np.sqrt(mse):.4f}\n')
+    f.writelines('\n')
 
-# confusion matrix
-for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
-    cm = confusion_matrix(y_test, y_pred)
-    print(f'Confusion matrix on {name.lower()} model: \n{cm}\n')
+    # confusion matrix
+    print('Calculating confusion matrix values...')
+    for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
+        cm = confusion_matrix(y_test, y_pred)
+        f.writelines(f'Confusion matrix on {name.lower()} model: \n{cm}\n')
+    f.writelines('\n')
 
-# classification report
-for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
-    class_report = classification_report(y_test, y_pred, digits=4)
-    print(f'Precision, recall, F-measure and support on the {name.lower()} model: \n{class_report}\n')
+    # classification report
+    print('Calculating precision, recall, F-measure and support...')
+    for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
+        class_report = classification_report(y_test, y_pred, digits=4)
+        f.writelines(f'Precision, recall, F-measure and support on the {name.lower()} model: \n{class_report}\n')
+    f.writelines('\n')
 
-# roc curve
-for (name, model), y_pred, y_pred_proba in zip(model_dict.items(), y_pred_results, y_pred_proba_results):
-    model_roc_auc = roc_auc_score(y_test, y_pred)
-    fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba[:, 1])
-    print(f'Model: {name.title()}\nFPR: {len(fpr)}\nTPR: {len(tpr)}\nNumber of thresholds: {len(thresholds)}\n')
-    fig, axes = plt.subplots(figsize=(10, 8))
-    axes.plot(fpr, tpr, marker='.', ms=6,
-              label='Model: {0:s}, Regression (area = {1:.4f})'.format(name.lower(), model_roc_auc))
-    axes.plot([0, 1], [0, 1], 'r--')
-    axes.set_xlim([0.0, 1.0])
-    axes.set_ylim([0.0, 1.05])
-    axes.set_xlabel('False Positive Rate')
-    axes.set_ylabel('True Positive Rate')
-    axes.set_title('Receiver operating characteristic for {0:s} model'.format(name.lower()))
-    axes.legend(loc="lower right")
-    # plt.grid(True, linestyle='--')
-    name = '_'.join(name.split(' ')).lower()
-    plt.savefig(name+'_auc.png', dpi=288, bbox_inches='tight')
+    # roc curve
+    print('Calculating ROC plot...')
+    for (name, model), y_pred, y_pred_proba in zip(model_dict.items(), y_pred_results, y_pred_proba_results):
+        model_roc_auc = roc_auc_score(y_test, y_pred)
+        fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba[:, 1])
+        f.writelines(f'Model: {name.title()}\nFPR: {len(fpr)}\nTPR: {len(tpr)}\n')
+        f.writelines(f'Number of thresholds: {len(thresholds)}\n')
+        f.writelines('\n')
+        fig, axes = plt.subplots(figsize=(10, 8))
+        axes.plot(fpr, tpr, marker='.', ms=6,
+                  label='Model: {0:s}, Regression (area = {1:.4f})'.format(name.lower(), model_roc_auc))
+        axes.plot([0, 1], [0, 1], 'r--')
+        axes.set_xlim([0.0, 1.0])
+        axes.set_ylim([0.0, 1.05])
+        axes.set_xlabel('False Positive Rate')
+        axes.set_ylabel('True Positive Rate')
+        axes.set_title('Receiver operating characteristic for {0:s} model'.format(name.lower()))
+        axes.legend(loc="lower right")
+        # plt.grid(True, linestyle='--')
+        name = '_'.join(name.split(' ')).lower()
+        plt.savefig(name+'_auc.png', dpi=288, bbox_inches='tight')
 
+    # cross validation score
+    def display_scores(model, scores):
+        f.writelines(f'Cross validation for the {model.lower()} model:\n')
+        # f.writelines(f'Scores: {scores}')
+        f.writelines(f'Mean: {scores.mean():.4f}\n')
+        f.writelines(f'Standard devation: {scores.std():.4f}\n')
+        f.writelines('\n')
 
-# cross validation score
-def display_scores(model, scores):
-    print(f'Cross validation for the {model.lower()} model:')
-    # print(f'Scores: {scores}')
-    print(f'Mean: {scores.mean():.4f}')
-    print(f'Standard devation: {scores.std():.4f}\n')
+    print('Calculating cross validation score...')
+    for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
+        scores = cross_val_score(model, y_pred.reshape(-1, 1), y_test,
+                                 scoring='neg_mean_squared_error', cv=10, n_jobs=-1)
+        display_scores(name, -scores)
 
-
-for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
-    scores = cross_val_score(model, y_pred.reshape(-1, 1), y_test, scoring='neg_mean_squared_error', cv=10, n_jobs=-1)
-    display_scores(name, -scores)
 print(f'Time elapsed: {(time() - t0):.2f} seconds')
-print('Done!')
