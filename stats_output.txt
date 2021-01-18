@@ -1,20 +1,20 @@
 Accuracy of the logistic regression on test set: 0.5838
-Accuracy of the decision tree classifier on test set: 0.7955
-Accuracy of the random forest classifier on test set: 0.9964
+Accuracy of the decision tree classifier on test set: 0.6973
+Accuracy of the random forest classifier on test set: 0.9475
 
 RMSE on test set with logistic regression model: 0.6452
-RMSE on test set with decision tree classifier model: 0.4522
-RMSE on test set with random forest classifier model: 0.0596
+RMSE on test set with decision tree classifier model: 0.5502
+RMSE on test set with random forest classifier model: 0.2292
 
 Confusion matrix on logistic regression model: 
 [[10221  5642]
  [ 7468  8165]]
 Confusion matrix on decision tree classifier model: 
-[[10794  5069]
- [ 1372 14261]]
+[[ 9864  5999]
+ [ 3536 12097]]
 Confusion matrix on random forest classifier model: 
-[[15759   104]
- [    8 15625]]
+[[14500  1363]
+ [  291 15342]]
 
 Precision, recall, F-measure and support on the logistic regression model: 
               precision    recall  f1-score   support
@@ -29,22 +29,22 @@ weighted avg     0.5845    0.5838    0.5822     31496
 Precision, recall, F-measure and support on the decision tree classifier model: 
               precision    recall  f1-score   support
 
-           0     0.8872    0.6805    0.7702     15863
-           1     0.7378    0.9122    0.8158     15633
+           0     0.7361    0.6218    0.6742     15863
+           1     0.6685    0.7738    0.7173     15633
 
-    accuracy                         0.7955     31496
-   macro avg     0.8125    0.7963    0.7930     31496
-weighted avg     0.8130    0.7955    0.7928     31496
+    accuracy                         0.6973     31496
+   macro avg     0.7023    0.6978    0.6957     31496
+weighted avg     0.7026    0.6973    0.6956     31496
 
 Precision, recall, F-measure and support on the random forest classifier model: 
               precision    recall  f1-score   support
 
-           0     0.9995    0.9934    0.9965     15863
-           1     0.9934    0.9995    0.9964     15633
+           0     0.9803    0.9141    0.9460     15863
+           1     0.9184    0.9814    0.9489     15633
 
-    accuracy                         0.9964     31496
-   macro avg     0.9964    0.9965    0.9964     31496
-weighted avg     0.9965    0.9964    0.9964     31496
+    accuracy                         0.9475     31496
+   macro avg     0.9494    0.9477    0.9474     31496
+weighted avg     0.9496    0.9475    0.9474     31496
 
 
 Model: Logistic Regression
@@ -53,24 +53,24 @@ TPR: 8360
 Number of thresholds: 8360
 
 Model: Decision Tree Classifier
-FPR: 376
-TPR: 376
-Number of thresholds: 376
+FPR: 341
+TPR: 341
+Number of thresholds: 341
 
 Model: Random Forest Classifier
-FPR: 199
-TPR: 199
-Number of thresholds: 199
+FPR: 4703
+TPR: 4703
+Number of thresholds: 4703
 
-Cross validation for the logistic regression model:
-Mean: 0.4162
-Standard devation: 0.0072
+Cross-validation Brier score for the logistic regression model:
+Average Brier score: 0.2430
+Standard devation: 0.0009
 
-Cross validation for the decision tree classifier model:
-Mean: 0.2045
-Standard devation: 0.0086
+Cross-validation Brier score for the decision tree classifier model:
+Average Brier score: 0.2100
+Standard devation: 0.0022
 
-Cross validation for the random forest classifier model:
-Mean: 0.0036
-Standard devation: 0.0013
+Cross-validation Brier score for the random forest classifier model:
+Average Brier score: 0.0488
+Standard devation: 0.0022
 

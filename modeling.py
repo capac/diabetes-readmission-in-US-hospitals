@@ -22,9 +22,8 @@ y = df.loc[:, 'readmitted']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
 model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, solver='newton-cg'),
-              'Decision tree classifier': DecisionTreeClassifier(max_depth=16),
-              'Random forest classifier': RandomForestClassifier(n_jobs=-1, n_estimators=200)}
-
+              'Decision tree classifier': DecisionTreeClassifier(max_depth=12, random_state=42),
+              'Random forest classifier': RandomForestClassifier(n_jobs=-1, max_depth=18)}
 
 t0 = time()
 with open(work_dir / 'stats_output.txt', 'w') as f:
@@ -71,31 +70,31 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
         f.writelines(f'Number of thresholds: {len(thresholds)}\n')
         f.writelines('\n')
         fig, axes = plt.subplots(figsize=(10, 8))
-        axes.plot(fpr, tpr, marker='.', ms=6,
+        axes.plot(fpr, tpr, marker='.', ms=8,
                   label='Model: {0:s}, Regression (area = {1:.4f})'.format(name.lower(), model_roc_auc))
         axes.plot([0, 1], [0, 1], 'r--')
         axes.set_xlim([0.0, 1.0])
-        axes.set_ylim([0.0, 1.05])
-        axes.set_xlabel('False Positive Rate')
-        axes.set_ylabel('True Positive Rate')
-        axes.set_title('Receiver operating characteristic for {0:s} model'.format(name.lower()))
+        axes.set_ylim([0.0, 1.02])
+        axes.set_xlabel('False Positive Rate', fontsize=14)
+        axes.set_ylabel('True Positive Rate', fontsize=14)
+        axes.set_title('Receiver operating characteristic for {0:s} model'.format(name.lower()), fontsize=16)
         axes.legend(loc="lower right")
         # plt.grid(True, linestyle='--')
         plot_file = '_'.join(name.split(' ')).lower()+'_auc.png'
         plt.savefig(work_dir / 'auc_plots' / plot_file, dpi=288, bbox_inches='tight')
 
-    # cross validation score
+    # cross validation Brier score
     def display_scores(model, scores):
-        f.writelines(f'Cross validation for the {model.lower()} model:\n')
+        f.writelines(f'Cross-validation Brier score for the {model.lower()} model:\n')
         # f.writelines(f'Scores: {scores}')
-        f.writelines(f'Mean: {scores.mean():.4f}\n')
+        f.writelines(f'Average Brier score: {scores.mean():.4f}\n')
         f.writelines(f'Standard devation: {scores.std():.4f}\n')
         f.writelines('\n')
 
-    print('Calculating cross validation score...')
+    print('Calculating average Brier score ...')
     for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
         scores = cross_val_score(model, y_pred.reshape(-1, 1), y_test,
-                                 scoring='neg_mean_squared_error', cv=10, n_jobs=-1)
+                                 scoring='neg_brier_score', cv=6, n_jobs=-1)
         display_scores(name, -scores)
 
 print(f'Time elapsed: {(time() - t0):.2f} seconds')
