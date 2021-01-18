@@ -81,7 +81,7 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
         axes.legend(loc="lower right")
         # plt.grid(True, linestyle='--')
         plot_file = '_'.join(name.split(' ')).lower()+'_auc.png'
-        plt.savefig(work_dir / 'auc_plots' / plot_file, dpi=288, bbox_inches='tight')
+        plt.savefig(work_dir / 'plots' / plot_file, dpi=288, bbox_inches='tight')
 
     # cross validation Brier score
     def display_scores(model, scores):
