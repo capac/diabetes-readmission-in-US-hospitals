@@ -27,7 +27,7 @@ model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, solver='newto
 
 
 t0 = time()
-with open('stats_output.txt', 'w') as f:
+with open(work_dir / 'stats_output.txt', 'w') as f:
     # model accuracy
     y_pred_results = []
     y_pred_proba_results = []
@@ -81,8 +81,8 @@ with open('stats_output.txt', 'w') as f:
         axes.set_title('Receiver operating characteristic for {0:s} model'.format(name.lower()))
         axes.legend(loc="lower right")
         # plt.grid(True, linestyle='--')
-        name = '_'.join(name.split(' ')).lower()
-        plt.savefig(name+'_auc.png', dpi=288, bbox_inches='tight')
+        plot_file = '_'.join(name.split(' ')).lower()+'_auc.png'
+        plt.savefig(work_dir / 'auc_plots' / plot_file, dpi=288, bbox_inches='tight')
 
     # cross validation score
     def display_scores(model, scores):
