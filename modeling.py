@@ -23,7 +23,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 
 model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, solver='newton-cg'),
               'Decision tree classifier': DecisionTreeClassifier(max_depth=12, random_state=42),
-              'Random forest classifier': RandomForestClassifier(n_jobs=-1)}
+              'Random forest classifier': RandomForestClassifier(n_jobs=-1, random_state=42)}
 
 t0 = time()
 with open(work_dir / 'stats_output.txt', 'w') as f:
@@ -38,13 +38,6 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
         y_pred_proba = model.predict_proba(X_test)
         y_pred_proba_results.append(y_pred_proba)
         f.writelines(f'Accuracy of the {name.lower()} on test set: {model.score(X_test, y_test):.4f}\n')
-    f.writelines('\n')
-
-    # mean squared error on test set
-    print('Calculating RMSE...')
-    for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
-        mse = mean_squared_error(y_test, y_pred)
-        f.writelines(f'RMSE on test set with {name.lower()} model: {np.sqrt(mse):.4f}\n')
     f.writelines('\n')
 
     # confusion matrix
