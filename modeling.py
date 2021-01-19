@@ -23,7 +23,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 
 model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, solver='newton-cg'),
               'Decision tree classifier': DecisionTreeClassifier(max_depth=12, random_state=42),
-              'Random forest classifier': RandomForestClassifier(n_jobs=-1, max_depth=18)}
+              'Random forest classifier': RandomForestClassifier(n_jobs=-1)}
 
 t0 = time()
 with open(work_dir / 'stats_output.txt', 'w') as f:
@@ -73,7 +73,7 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
         axes.plot(fpr, tpr, marker='.', ms=8,
                   label='Model: {0:s}, Regression (area = {1:.4f})'.format(name.lower(), model_roc_auc))
         axes.plot([0, 1], [0, 1], 'r--')
-        axes.set_xlim([0.0, 1.0])
+        axes.set_xlim([-0.02, 1.0])
         axes.set_ylim([0.0, 1.02])
         axes.set_xlabel('False Positive Rate', fontsize=14)
         axes.set_ylabel('True Positive Rate', fontsize=14)
