@@ -1,10 +1,6 @@
 Accuracy of the logistic regression on test set: 0.5838
 Accuracy of the decision tree classifier on test set: 0.6973
-Accuracy of the random forest classifier on test set: 0.9964
-
-RMSE on test set with logistic regression model: 0.6452
-RMSE on test set with decision tree classifier model: 0.5502
-RMSE on test set with random forest classifier model: 0.0596
+Accuracy of the random forest classifier on test set: 0.9959
 
 Confusion matrix on logistic regression model: 
 [[10221  5642]
@@ -13,7 +9,7 @@ Confusion matrix on decision tree classifier model:
 [[ 9864  5999]
  [ 3536 12097]]
 Confusion matrix on random forest classifier model: 
-[[15759   104]
+[[15742   121]
  [    8 15625]]
 
 Precision, recall, F-measure and support on the logistic regression model: 
@@ -39,12 +35,12 @@ weighted avg     0.7026    0.6973    0.6956     31496
 Precision, recall, F-measure and support on the random forest classifier model: 
               precision    recall  f1-score   support
 
-           0     0.9995    0.9934    0.9965     15863
-           1     0.9934    0.9995    0.9964     15633
+           0     0.9995    0.9924    0.9959     15863
+           1     0.9923    0.9995    0.9959     15633
 
-    accuracy                         0.9964     31496
-   macro avg     0.9964    0.9965    0.9964     31496
-weighted avg     0.9965    0.9964    0.9964     31496
+    accuracy                         0.9959     31496
+   macro avg     0.9959    0.9959    0.9959     31496
+weighted avg     0.9959    0.9959    0.9959     31496
 
 
 Model: Logistic Regression
@@ -58,9 +54,9 @@ TPR: 341
 Number of thresholds: 341
 
 Model: Random Forest Classifier
-FPR: 116
-TPR: 116
-Number of thresholds: 116
+FPR: 108
+TPR: 108
+Number of thresholds: 108
 
 Cross-validation Brier score for the logistic regression model:
 Average Brier score: 0.2430
@@ -71,6 +67,6 @@ Average Brier score: 0.2100
 Standard devation: 0.0022
 
 Cross-validation Brier score for the random forest classifier model:
-Average Brier score: 0.0035
-Standard devation: 0.0006
+Average Brier score: 0.0041
+Standard devation: 0.0009
 
