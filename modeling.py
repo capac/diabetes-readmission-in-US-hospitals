@@ -44,7 +44,7 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
     print('Calculating confusion matrix values and plot...')
     for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
         cm = confusion_matrix(y_test, y_pred)
-        conf_mx_heat_plot(cm, work_dir / 'plots')
+        conf_mx_heat_plot(cm, name, work_dir / 'plots')
         f.writelines(f'Confusion matrix on {name.lower()} model: \n{cm}\n')
     f.writelines('\n')
 
