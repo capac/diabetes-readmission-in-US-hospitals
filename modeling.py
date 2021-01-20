@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 import pandas as pd
 import matplotlib.pyplot as plt
+from helper_funcs.helper_plots import conf_mx_heat_plot
 from time import time
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
@@ -39,10 +40,11 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
         f.writelines(f'Accuracy of the {name.lower()} on test set: {model.score(X_test, y_test):.4f}\n')
     f.writelines('\n')
 
-    # confusion matrix
-    print('Calculating confusion matrix values...')
+    # confusion matrix with plot
+    print('Calculating confusion matrix values and plot...')
     for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
         cm = confusion_matrix(y_test, y_pred)
+        conf_mx_heat_plot(cm, work_dir / 'plots')
         f.writelines(f'Confusion matrix on {name.lower()} model: \n{cm}\n')
     f.writelines('\n')
 
