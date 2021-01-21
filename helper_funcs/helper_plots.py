@@ -5,6 +5,22 @@ import matplotlib.pyplot as plt
 from pathlib import PurePath
 
 
+def roc_curve_plot_with_auc(fpr, tpr, model_roc_auc, name, work_dir):
+    fig, axes = plt.subplots(figsize=(5, 4))
+    axes.plot(fpr, tpr, marker='.', ms=7,
+              label='Model: {0:s}, AUC: {1:.4f}'.format(name.lower(), model_roc_auc))
+    axes.plot([0, 1], [0, 1], 'r--')
+    axes.set_xlim([-0.02, 1.0])
+    axes.set_ylim([0.0, 1.02])
+    axes.set_xlabel('False Positive Rate', fontsize=9)
+    axes.set_ylabel('True Positive Rate', fontsize=9)
+    axes.set_title('Receiver operating characteristic for {0:s} model'.format(name.lower()), fontsize=10)
+    axes.legend(loc='lower right', fontsize=8)
+    fig.tight_layout()
+    plot_file = '_'.join(name.split(' ')).lower()+'_auc.png'
+    plt.savefig(work_dir / 'plots' / plot_file, dpi=288, bbox_inches='tight')
+
+
 def conf_mx_heat_plot(conf_mx, model_name, plot_dir):
     row_sums = conf_mx.sum(axis=1, keepdims=True)
     norm_conf_mx = conf_mx/row_sums
