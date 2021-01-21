@@ -3,8 +3,7 @@
 import os
 from pathlib import Path
 import pandas as pd
-import matplotlib.pyplot as plt
-from helper_funcs.helper_plots import conf_mx_heat_plot
+from helper_funcs.helper_plots import conf_mx_heat_plot, roc_curve_plot_with_auc
 from time import time
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
@@ -62,22 +61,10 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
         fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba[:, 1])
         f.writelines(f'Model: {name.title()}\nFPR: {len(fpr)}\nTPR: {len(tpr)}\n')
         f.writelines(f'Number of thresholds: {len(thresholds)}\n')
+        roc_curve_plot_with_auc(fpr, tpr, model_roc_auc, name, work_dir)
         f.writelines('\n')
-        fig, axes = plt.subplots(figsize=(10, 8))
-        axes.plot(fpr, tpr, marker='.', ms=8,
-                  label='Model: {0:s}, Regression (area = {1:.4f})'.format(name.lower(), model_roc_auc))
-        axes.plot([0, 1], [0, 1], 'r--')
-        axes.set_xlim([-0.02, 1.0])
-        axes.set_ylim([0.0, 1.02])
-        axes.set_xlabel('False Positive Rate', fontsize=14)
-        axes.set_ylabel('True Positive Rate', fontsize=14)
-        axes.set_title('Receiver operating characteristic for {0:s} model'.format(name.lower()), fontsize=16)
-        axes.legend(loc="lower right")
-        # plt.grid(True, linestyle='--')
-        plot_file = '_'.join(name.split(' ')).lower()+'_auc.png'
-        plt.savefig(work_dir / 'plots' / plot_file, dpi=288, bbox_inches='tight')
 
-    # cross validation Brier score
+    # cross validation average Brier score
     def display_scores(model, scores):
         f.writelines(f'Cross-validation Brier score for the {model.lower()} model:\n')
         # f.writelines(f'Scores: {scores}')
