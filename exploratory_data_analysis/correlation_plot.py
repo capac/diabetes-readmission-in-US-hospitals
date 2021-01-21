@@ -20,4 +20,5 @@ sns.heatmap(corrs, cmap='RdBu_r', fmt='1.3f', annot=True, annot_kws={'fontsize':
 plt.setp(axes.get_xticklabels(), ha="right", rotation_mode="anchor", rotation=45, fontsize=10)
 plt.setp(axes.get_yticklabels(), ha="right", rotation_mode="anchor", rotation=0, fontsize=10)
 plt.title('Correlation plot of numeric features with readmission', fontsize=16)
+fig.tight_layout()
 plt.savefig(work_dir / 'plots/corr_plot.png', dpi=288, bbox_inches='tight')
