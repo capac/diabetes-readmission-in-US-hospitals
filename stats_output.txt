@@ -5,9 +5,11 @@ Accuracy of the random forest classifier on test set: 0.9959
 Confusion matrix on logistic regression model: 
 [[10221  5642]
  [ 7468  8165]]
+
 Confusion matrix on decision tree classifier model: 
 [[ 9864  5999]
  [ 3536 12097]]
+
 Confusion matrix on random forest classifier model: 
 [[15742   121]
  [    8 15625]]
