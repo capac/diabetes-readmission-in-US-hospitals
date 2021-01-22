@@ -41,11 +41,13 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
 
     # confusion matrix with plot
     print('Calculating confusion matrix values and plot...')
+    cm_dict = {}
     for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
         cm = confusion_matrix(y_test, y_pred)
-        conf_mx_heat_plot(cm, name, work_dir / 'plots')
         f.writelines(f'Confusion matrix on {name.lower()} model: \n{cm}\n')
-    f.writelines('\n')
+        cm_dict[name] = cm
+        f.writelines('\n')
+    conf_mx_heat_plot(cm_dict, work_dir)
 
     # classification report
     print('Calculating precision, recall, F-measure and support...')
@@ -56,13 +58,15 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
 
     # roc curve
     print('Calculating ROC plot...')
+    rates_dict = {}
     for (name, model), y_pred, y_pred_proba in zip(model_dict.items(), y_pred_results, y_pred_proba_results):
         model_roc_auc = roc_auc_score(y_test, y_pred)
         fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba[:, 1])
         f.writelines(f'Model: {name.title()}\nFPR: {len(fpr)}\nTPR: {len(tpr)}\n')
         f.writelines(f'Number of thresholds: {len(thresholds)}\n')
-        roc_curve_plot_with_auc(fpr, tpr, model_roc_auc, name, work_dir)
+        rates_dict[name] = [fpr, tpr, model_roc_auc]
         f.writelines('\n')
+    roc_curve_plot_with_auc(rates_dict, work_dir)
 
     # cross validation average Brier score
     def display_scores(model, scores):
