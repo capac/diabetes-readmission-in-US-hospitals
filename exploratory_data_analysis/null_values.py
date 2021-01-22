@@ -26,5 +26,4 @@ plt.setp(axes.get_xticklabels(), ha="right", rotation_mode="anchor", rotation=45
 plt.setp(axes.get_yticklabels(), fontsize=14)
 axes.set_ylabel('Percent (%)', fontsize=14)
 axes.set_title('Percentage of null values per feature', fontsize=16)
-# plt.grid(True, linestyle='--')
 plt.savefig('plots/null_values.png', dpi=288, bbox_inches='tight')
