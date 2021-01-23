@@ -7,7 +7,7 @@ from pathlib import Path
 
 home = os.environ['HOME']
 
-work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/kaggle-notebooks/diabetes-in-130-US-hospitals/'
+work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals/'
 data_file = work_dir / 'data/diabetic_data.csv'
 
 df = pd.read_csv(data_file, na_values='?', low_memory=False)
@@ -32,10 +32,11 @@ df_list = [age_df, race_df, gender_df]
 title_list = ['Percentage for age range',
               'Percentage for race',
               'Percentage for gender']
+wd_list = [0.6, 0.6, 0.5]
 
 fig, axes = plt.subplots(1, 3, figsize=(14, 4))
-for ax, title, df in zip(axes, title_list, df_list):
-    ax.bar(df.iloc[:, 0], df.iloc[:, 1], color=plt.cm.Paired.colors, edgecolor='k')
+for ax, title, df, wd in zip(axes, title_list, df_list, wd_list):
+    ax.bar(df.iloc[:, 0], df.iloc[:, 1], color=plt.cm.Paired.colors, edgecolor='k', width=wd)
     plt.setp(ax.get_xticklabels(), ha="right", rotation_mode="anchor", rotation=45, fontsize=10)
     plt.setp(ax.get_yticklabels(), fontsize=10)
     ax.set_ylabel('Percent (%)', fontsize=10)
