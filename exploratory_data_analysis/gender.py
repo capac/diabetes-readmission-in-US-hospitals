@@ -7,7 +7,7 @@ from pathlib import Path
 
 home = os.environ['HOME']
 
-work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/kaggle-notebooks/diabetes-in-130-US-hospitals/'
+work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals/'
 data_file = work_dir / 'data/diabetic_data.csv'
 
 df = pd.read_csv(data_file, na_values='?', low_memory=False)
