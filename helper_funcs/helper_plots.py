@@ -31,7 +31,7 @@ def conf_mx_heat_plot(cm_dict, work_dir):
         row_sums = conf_mx.sum(axis=1, keepdims=True)
         norm_conf_mx = conf_mx/row_sums
         sns.heatmap(norm_conf_mx, cmap=plt.cm.coolwarm, ax=ax, square=True,
-                    vmin=0, vmax=1, annot=True, fmt='.3f', color='w', annot_kws={'fontsize': 8},
+                    vmin=0, vmax=1, annot=True, fmt='.4f', color='w', annot_kws={'fontsize': 8},
                     xticklabels=['Not readmitted', 'Readmitted'],
                     yticklabels=['Not readmitted', 'Readmitted'],
                     cbar_kws={'fraction': 0.0465, 'pad': 0.02})
