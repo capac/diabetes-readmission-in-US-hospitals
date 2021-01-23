@@ -22,7 +22,8 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 
 model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, solver='newton-cg'),
               'Decision tree classifier': DecisionTreeClassifier(max_depth=12, random_state=42),
-              'Random forest classifier': RandomForestClassifier(n_jobs=-1, random_state=42)}
+              'Random forest classifier': RandomForestClassifier(n_jobs=-1, random_state=42,
+                                                                 max_depth=40, n_estimators=500)}
 
 t0 = time()
 with open(work_dir / 'stats_output.txt', 'w') as f:

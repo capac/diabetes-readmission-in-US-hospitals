@@ -16,7 +16,7 @@ X = df.drop('readmitted', axis=1)
 y = df.loc[:, 'readmitted']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-rf_clf = RandomForestClassifier(n_jobs=-1, random_state=42)
+rf_clf = RandomForestClassifier(n_jobs=-1, max_depth=40, n_estimators=500, random_state=42)
 rf_clf.fit(X_train, y_train)
 std_err = np.std([tree.feature_importances_ for tree in rf_clf.estimators_], axis=0)
 
