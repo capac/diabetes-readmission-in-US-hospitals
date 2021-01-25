@@ -56,9 +56,9 @@ TPR: 341
 Number of thresholds: 341
 
 Model: Random Forest Classifier
-FPR: 1833
-TPR: 1833
-Number of thresholds: 1833
+FPR: 1836
+TPR: 1836
+Number of thresholds: 1836
 
 Cross-validation Brier score for the logistic regression model:
 Average Brier score: 0.2430
