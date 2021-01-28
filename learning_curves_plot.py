@@ -36,17 +36,15 @@ model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, solver='newto
               'Random forest classifier': RandomForestClassifier(n_jobs=-1, random_state=42,
                                                                  max_depth=40, n_estimators=500)}
 
-y_range_list = [[0.45, 1.05], [0.45, 1.15], [0.45, 1.25]]
 
 fig, axes = plt.subplots(1, 3, figsize=(14, 4))
-for ax, y_range, (model_name, model_instance) in zip(axes, y_range_list, model_dict.items()):
+for ax, (model_name, model_instance) in zip(axes, model_dict.items()):
     train_errors, val_errors = learning_curves_data(model_instance, X, y)
-    ax.plot(train_errors, 'r-+', linewidth=2, label='training')
-    ax.plot(val_errors, 'b-', linewidth=2, label='validation')
-    ax.legend(loc='upper right', fontsize=12)
+    ax.plot(train_errors, 'r.-', linewidth=2, label='training')
+    ax.plot(val_errors, 'b.-', linewidth=2, label='validation')
+    ax.legend(loc='best', fontsize=12)
     ax.set_title('Accuracy score for {0:s}'.format(model_name.lower()), fontsize=14)
     ax.set_xlabel('Training set size', fontsize=12)
     ax.set_ylabel('Accuracy', fontsize=12)
-    ax.set_ylim(y_range)
 fig.tight_layout()
 plt.savefig(work_dir / 'plots/learning_curves_plot.png', dpi=288, bbox_inches='tight')
