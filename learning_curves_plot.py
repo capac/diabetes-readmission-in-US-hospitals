@@ -4,12 +4,14 @@ import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from time import time
 from sklearn.model_selection import learning_curve, ShuffleSplit
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
+import matplotlib.pyplot as plt
+from matplotlib import ticker
+
 
 home = os.environ['HOME']
 work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals'
@@ -27,7 +29,7 @@ train_sizes = np.linspace(.1, 1.0, 5)
 def learning_curves_data(estimator, X, y, cv=cv, train_sizes=train_sizes):
     train_sizes, train_scores, val_scores = learning_curve(estimator, X, y, cv=cv, n_jobs=-1,
                                                            train_sizes=train_sizes,
-                                                           scoring='accuracy')
+                                                           scoring='accuracy', shuffle=True)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     val_scores_mean = np.mean(val_scores, axis=1)
@@ -52,7 +54,9 @@ for ax, (model_name, model_instance) in zip(axes, model_dict.items()):
     ax.plot(train_sizes, val_scores_means, 'b.-', linewidth=1, label='validation')
     ax.legend(loc='best', fontsize=12)
     ax.set_title('Learning curve for {0:s}'.format(model_name.lower()), fontsize=14)
-    ax.set_xlabel('Training examples', fontsize=12)
+    ax.set_xlabel('Training examples (in units of $10^3$)', fontsize=12)
+    ticks = ticker.FuncFormatter(lambda x, _: '{0:g}'.format(x*1e-3))
+    ax.xaxis.set_major_formatter(ticks)
     ax.set_ylabel('Score', fontsize=12)
 fig.tight_layout()
 plt.savefig(work_dir / 'plots/learning_curves_plot.png', dpi=288, bbox_inches='tight')
