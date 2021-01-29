@@ -45,15 +45,16 @@ df_list = [missing_df, medical_specialty_df, payer_code_sorted_df]
 title_list = ['Percentage of missing values per feature',
               'Percent breakdown of first 20 medical specialties',
               'Percent breakdown of first 15 payer codes']
-wd_list = [0.6, 0.6, 0.5]
-fontsize_list = [10, 9, 9]
+width_list = [0.6, 0.6, 0.5]
+fontsize_list = [11, 10, 10]
 
 # plot
-fig, axes = plt.subplots(1, 3, figsize=(14, 4))
-for df, ax, title, wd, ft in zip(df_list, axes, title_list, wd_list, fontsize_list):
+fig, axes = plt.subplots(3, 1, figsize=(8, 12))
+for df, ax, title, wd, ft in zip(df_list, axes, title_list, width_list, fontsize_list):
     ax.bar(df.iloc[:, 0], df.iloc[:, 1], color=plt.cm.Paired.colors, edgecolor='k', width=wd)
     plt.setp(ax.get_xticklabels(), ha="right", rotation_mode="anchor", rotation=45, fontsize=ft)
-    plt.setp(ax.get_yticklabels(), fontsize=10)
-    ax.set_ylabel('Percent (%)', fontsize=10)
-    ax.set_title(title, fontsize=11)
+    plt.setp(ax.get_yticklabels(), fontsize=11)
+    ax.set_ylabel('Percent (%)', fontsize=11)
+    ax.set_title(title, fontsize=12)
+fig.tight_layout()
 plt.savefig('plots/null_values_payer_codes_speciality.png', dpi=288, bbox_inches='tight')
