@@ -20,7 +20,7 @@ missing_df = missing_values.reset_index().rename(columns={'index': 'Feature', 0:
 missing_df['Percentage'] = missing_df['Percentage'].apply('{:.4f}'.format).astype('float')
 missing_df = missing_df.loc[missing_df['Percentage'] != 0].sort_values(by='Percentage', ascending=False)
 
-fig, axes = plt.subplots(figsize=(8, 5))
+fig, axes = plt.subplots(figsize=(8, 4))
 axes.bar(missing_df['Feature'], missing_df['Percentage'], color=plt.cm.Paired.colors, edgecolor='k')
 plt.setp(axes.get_xticklabels(), ha="right", rotation_mode="anchor", rotation=45, fontsize=14)
 plt.setp(axes.get_yticklabels(), fontsize=14)
