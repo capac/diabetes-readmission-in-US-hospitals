@@ -10,7 +10,7 @@ from sklearn.preprocessing import StandardScaler
 
 home = os.environ['HOME']
 
-work_dir = Path(home) / '/Users/angelo/Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals/'
+work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals/'
 
 # loading data into data frame
 df = pd.read_csv(work_dir / 'data/diabetic_data.csv', na_values='?', low_memory=False)
