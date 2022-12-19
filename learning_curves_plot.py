@@ -38,7 +38,7 @@ def learning_curves_data(estimator, X, y, cv=cv, train_sizes=train_sizes):
 model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, solver='newton-cg'),
               'Decision tree classifier': DecisionTreeClassifier(max_depth=12, random_state=42),
               'Random forest classifier': RandomForestClassifier(n_jobs=-1, random_state=42,
-                                                                 max_depth=40, n_estimators=100)}
+                                                                 max_depth=40, n_estimators=500)}
 
 fig, axes = plt.subplots(1, 3, figsize=(14, 4))
 for ax, (model_name, model_instance) in zip(axes, model_dict.items()):
