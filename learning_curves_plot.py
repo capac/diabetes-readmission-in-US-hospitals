@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-import os
 from pathlib import Path
 import numpy as np
 import pandas as pd
@@ -13,8 +12,7 @@ import matplotlib.pyplot as plt
 from matplotlib import ticker
 
 
-home = os.environ['HOME']
-work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals'
+work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals'
 df = pd.read_csv(work_dir / 'data/df_encoded.csv')
 
 # df = df.sample(frac=0.2)

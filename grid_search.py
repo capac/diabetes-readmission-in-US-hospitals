@@ -1,14 +1,12 @@
 #!/usr/bin/env python
 
-import os
 from pathlib import Path
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split, GridSearchCV
 
-home = os.environ['HOME']
-work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals'
+work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals'
 df = pd.read_csv(work_dir / 'data/df_encoded.csv')
 
 X = df.drop('readmitted', axis=1)
