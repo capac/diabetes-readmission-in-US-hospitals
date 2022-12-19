@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals'
+work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/uci-ml-repository/diabetes-in-130-US-hospitals'
 df = pd.read_csv(work_dir / 'data/df_encoded.csv')
 
 num_cols = ['time_in_hospital', 'num_lab_procedures', 'num_procedures',

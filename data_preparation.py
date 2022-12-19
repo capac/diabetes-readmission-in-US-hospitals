@@ -6,7 +6,7 @@ from pathlib import Path
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.preprocessing import StandardScaler
 
-work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals/'
+work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/uci-ml-repository/diabetes-in-130-US-hospitals'
 
 # loading data into data frame
 df = pd.read_csv(work_dir / 'data/diabetic_data.csv', na_values='?', low_memory=False)
