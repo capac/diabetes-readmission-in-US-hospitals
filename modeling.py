@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
+from time import time
 from pathlib import Path
 import pandas as pd
 from helper_funcs.helper_plots import conf_mx_heat_plot, roc_curve_plot_with_auc
-from time import time
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
@@ -18,13 +18,16 @@ X = df.drop('readmitted', axis=1)
 y = df.loc[:, 'readmitted']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, solver='newton-cg'),
-              'Decision tree classifier': DecisionTreeClassifier(max_depth=12, random_state=42),
-              'Random forest classifier': RandomForestClassifier(n_jobs=-1, random_state=42,
-                                                                 max_depth=40, n_estimators=500)}
+model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, C=0.01,
+                                                        solver='newton-cg'),
+              'Decision tree classifier': DecisionTreeClassifier(max_depth=16,
+                                                                 random_state=42),
+              'Random forest classifier': RandomForestClassifier(n_jobs=-1,
+                                                                 random_state=42,
+                                                                 max_depth=16, n_estimators=160)}
 
 t0 = time()
-with open(work_dir / 'stats_output.txt', 'w') as f:
+with open(work_dir / 'stats_output_update.txt', 'w') as f:
     # model accuracy
     y_pred_results = []
     y_pred_proba_results = []
@@ -75,7 +78,7 @@ with open(work_dir / 'stats_output.txt', 'w') as f:
         f.writelines(f'Standard devation: {scores.std():.4f}\n')
         f.writelines('\n')
 
-    print('Calculating average Brier score ...')
+    print('Calculating average Brier score...')
     for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
         scores = cross_val_score(model, y_pred.reshape(-1, 1), y_test,
                                  scoring='neg_brier_score', cv=6, n_jobs=-1)

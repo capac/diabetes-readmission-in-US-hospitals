@@ -13,8 +13,8 @@ X = df.drop('readmitted', axis=1)
 y = df.loc[:, 'readmitted']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-param_grid = {'max_depth': np.arange(20, 81, 20),
-              'n_estimators': np.arange(400, 551, 50),
+param_grid = {'max_depth': np.arange(4, 20, 4),
+              'n_estimators': np.arange(10, 200, 50),
               'random_state': [42]}
 
 rf_clf = RandomForestClassifier()
