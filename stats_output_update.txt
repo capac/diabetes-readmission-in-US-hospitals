@@ -1,10 +1,10 @@
-Accuracy of the logistic regression on test set: 0.5889
-Accuracy of the decision tree classifier on test set: 0.7874
-Accuracy of the random forest classifier on test set: 0.9085
+Accuracy of the logistic regression on the test set: 0.5895
+Accuracy of the decision tree classifier on the test set: 0.7874
+Accuracy of the random forest classifier on the test set: 0.9085
 
 Confusion matrix on logistic regression model: 
-[[10182  5681]
- [ 7266  8367]]
+[[10201  5662]
+ [ 7267  8366]]
 
 Confusion matrix on decision tree classifier model: 
 [[10804  5059]
@@ -17,12 +17,12 @@ Confusion matrix on random forest classifier model:
 Precision, recall, F-measure and support on the logistic regression model: 
               precision    recall  f1-score   support
 
-           0     0.5836    0.6419    0.6113     15863
-           1     0.5956    0.5352    0.5638     15633
+           0     0.5840    0.6431    0.6121     15863
+           1     0.5964    0.5352    0.5641     15633
 
-    accuracy                         0.5889     31496
-   macro avg     0.5896    0.5885    0.5876     31496
-weighted avg     0.5895    0.5889    0.5877     31496
+    accuracy                         0.5895     31496
+   macro avg     0.5902    0.5891    0.5881     31496
+weighted avg     0.5901    0.5895    0.5883     31496
 
 Precision, recall, F-measure and support on the decision tree classifier model: 
               precision    recall  f1-score   support
@@ -46,9 +46,9 @@ weighted avg     0.9111    0.9085    0.9083     31496
 
 
 Model: Logistic Regression
-FPR: 8417
-TPR: 8417
-Number of thresholds: 8417
+FPR: 8444
+TPR: 8444
+Number of thresholds: 8444
 
 Model: Decision Tree Classifier
 FPR: 372
@@ -61,8 +61,8 @@ TPR: 5231
 Number of thresholds: 5231
 
 Cross-validation Brier score for the logistic regression model:
-Average Brier score: 0.2421
-Standard devation: 0.0009
+Average Brier score: 0.2420
+Standard devation: 0.0011
 
 Cross-validation Brier score for the decision tree classifier model:
 Average Brier score: 0.1631

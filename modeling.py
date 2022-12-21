@@ -18,7 +18,7 @@ X = df.drop('readmitted', axis=1)
 y = df.loc[:, 'readmitted']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, C=0.01,
+model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, C=1e3,
                                                         solver='newton-cg'),
               'Decision tree classifier': DecisionTreeClassifier(max_depth=16,
                                                                  random_state=42),
@@ -38,7 +38,8 @@ with open(work_dir / 'stats_output_update.txt', 'w') as f:
         y_pred_results.append(y_pred)
         y_pred_proba = model.predict_proba(X_test)
         y_pred_proba_results.append(y_pred_proba)
-        f.writelines(f'Accuracy of the {name.lower()} on test set: {model.score(X_test, y_test):.4f}\n')
+        f.writelines(f'Accuracy of the {name.lower()} on the test set: '
+                     f'{model.score(X_test, y_test):.4f}\n')
     f.writelines('\n')
 
     # confusion matrix with plot
