@@ -18,8 +18,8 @@ X = df.drop('readmitted', axis=1)
 y = df.loc[:, 'readmitted']
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, C=1e3,
-                                                        solver='newton-cg'),
+model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, C=1e2,
+                                                        solver='newton-cholesky'),
               'Decision tree classifier': DecisionTreeClassifier(max_depth=16,
                                                                  random_state=42),
               'Random forest classifier': RandomForestClassifier(n_jobs=-1,

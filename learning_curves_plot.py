@@ -36,8 +36,8 @@ def learning_curves_data(estimator, X, y, cv=5, train_sizes=train_sizes):
     return train_sizes, train_scores_mean, train_scores_std, val_scores_mean, val_scores_std
 
 
-model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, C=1e3,
-                                                        solver='newton-cg'),
+model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, C=1e2,
+                                                        solver='newton-cholesky'),
               'Decision tree classifier': DecisionTreeClassifier(max_depth=16,
                                                                  random_state=42),
               'Random forest classifier': RandomForestClassifier(n_jobs=-1,
