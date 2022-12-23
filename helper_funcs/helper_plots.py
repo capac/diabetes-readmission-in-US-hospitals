@@ -8,7 +8,7 @@ def roc_curve_plot_with_auc(rates_dict, work_dir):
     fig, axes = plt.subplots(1, 3, figsize=(12, 4))
     rates_tuples = rates_dict.items()
     for ax, (name, rates_list) in zip(axes, rates_tuples):
-        fpr, tpr, model_roc_auc = rates_listgit 
+        fpr, tpr, model_roc_auc = rates_list
         ax.plot(fpr, tpr, 'b.-', label='AUC: {:.4f}'.format(model_roc_auc))
         ax.plot([0, 1], [0, 1], 'r--')
         ax.set_xlim([-0.02, 1.0])
