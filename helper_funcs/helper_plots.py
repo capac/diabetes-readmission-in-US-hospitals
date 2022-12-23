@@ -19,7 +19,7 @@ def roc_curve_plot_with_auc(rates_dict, work_dir):
         ax.set_ylabel('True Positive Rate', fontsize=10)
         ax.set_title('ROC curve for {0:s}'.format(name.lower()), fontsize=11)
         ax.legend(loc='lower right', fontsize=12)
-    fig.suptitle('Receiver Operating Characteristics Curves', fontsize=12)
+    fig.suptitle('Receiver operating characteristics curves', fontsize=12)
     fig.tight_layout()
     plt.savefig(work_dir / 'plots/auc_plots.png', dpi=288, bbox_inches='tight')
 
