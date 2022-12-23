@@ -27,7 +27,7 @@ model_dict = {'Logistic regression': LogisticRegression(n_jobs=-1, C=1e2,
                                                                  max_depth=16, n_estimators=160)}
 
 t0 = time()
-with open(work_dir / 'stats_output_update.txt', 'w') as f:
+with open(work_dir / 'stats_output.txt', 'w') as f:
     # model accuracy
     y_pred_results = []
     y_pred_proba_results = []

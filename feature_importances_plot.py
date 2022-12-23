@@ -31,4 +31,4 @@ axes.bar(sorted_features_df.index, sorted_features_df['col_name'],
 plt.setp(axes.get_xticklabels(), ha="right", rotation_mode="anchor", rotation=45, fontsize=10)
 plt.setp(axes.get_yticklabels(), fontsize=10)
 axes.set_title('Feature importances', fontsize=14)
-plt.savefig('plots/feature_importances_update.png', dpi=288, bbox_inches='tight')
+plt.savefig('plots/feature_importances.png', dpi=288, bbox_inches='tight')

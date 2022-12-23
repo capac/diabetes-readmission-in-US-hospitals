@@ -21,7 +21,7 @@ def roc_curve_plot_with_auc(rates_dict, work_dir):
         ax.legend(loc='lower right', fontsize=12)
     fig.suptitle('Receiver Operating Characteristics Curves', fontsize=12)
     fig.tight_layout()
-    plt.savefig(work_dir / 'plots/auc_plots_update.png', dpi=288, bbox_inches='tight')
+    plt.savefig(work_dir / 'plots/auc_plots.png', dpi=288, bbox_inches='tight')
 
 
 def conf_mx_heat_plot(cm_dict, work_dir):
@@ -48,5 +48,5 @@ def conf_mx_heat_plot(cm_dict, work_dir):
         ax.set_ylabel('Actual values', fontsize=10)
     fig.suptitle('Confusion matrix heatmaps', fontsize=12)
     fig.tight_layout()
-    plt.savefig(work_dir / 'plots/confusion_matrix_plots_update.png',
+    plt.savefig(work_dir / 'plots/confusion_matrix_plots.png',
                 dpi=288, bbox_inches='tight')

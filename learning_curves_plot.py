@@ -61,5 +61,5 @@ for ax, (model_name, model_instance) in zip(axes, model_dict.items()):
     ax.xaxis.set_major_formatter(ticks)
     ax.set_ylabel('Score', fontsize=12)
 fig.tight_layout()
-plt.savefig(work_dir / 'plots/learning_curves_plot_update.png', dpi=288, bbox_inches='tight')
+plt.savefig(work_dir / 'plots/learning_curves_plot.png', dpi=288, bbox_inches='tight')
 print(f'Time elapsed: {(time() - t0):.2f} seconds')
