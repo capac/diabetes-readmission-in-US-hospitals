@@ -34,14 +34,14 @@ max_glu_serum_df = max_glu_serum_df.to_frame().reset_index().\
     rename(columns={'max_glu_serum': 'Feature',
                     'proportion': 'Proportion'})
 max_glu_serum_df['Feature'] = max_glu_serum_df['Feature'].\
-    cat.add_categories('Missing').fillna('Missing')
+    cat.add_categories('Null').fillna('Null')
 
 # A1C result
 A1Cresult_df = df.A1Cresult.value_counts(dropna=False, normalize=True)*100
 A1Cresult_df = A1Cresult_df.to_frame().reset_index().\
     rename(columns={'A1Cresult': 'Feature', 'proportion': 'Proportion'})
 A1Cresult_df['Feature'] = A1Cresult_df['Feature'].\
-    cat.add_categories('Missing').fillna('Missing')
+    cat.add_categories('Null').fillna('Null')
 
 # payer codes
 payer_code_sorted_df = df['payer_code'].value_counts(dropna=False,
@@ -54,7 +54,7 @@ payer_code_sorted_df['Payer Code'] = \
     astype('category')
 payer_code_sorted_df['Payer Code'] = \
     payer_code_sorted_df['Payer Code'].\
-    cat.add_categories('Missing').fillna('Missing')
+    cat.add_categories('Null').fillna('Null')
 
 # medical speciality
 medical_specialty_df = df['medical_specialty'].\
@@ -68,7 +68,7 @@ medical_specialty_df['Medical Specialty'] = \
     astype('category')
 medical_specialty_df['Medical Specialty'] = \
     medical_specialty_df['Medical Specialty'].\
-    cat.add_categories('Missing').fillna('Missing')
+    cat.add_categories('Null').fillna('Null')
 
 # print(f'missing_df: {missing_df}')
 # print(f'payer_code_sorted_df: {payer_code_sorted_df}')
@@ -76,9 +76,9 @@ medical_specialty_df['Medical Specialty'] = \
 
 df_list = [missing_df, max_glu_serum_df, A1Cresult_df,
            medical_specialty_df, payer_code_sorted_df]
-title_list = ['Percentage of missing values per feature',
-              'Percent breakdown of max_glu_serum results',
-              'Percent breakdown of HbA1c results',
+title_list = ['Percentage of null/none values per feature',
+              'Percent breakdown of max_glu_serum null/none values',
+              'Percent breakdown of HbA1c null/none values',
               'Percent breakdown of first 20 medical specialties',
               'Percent breakdown of first 15 payer codes']
 width_list = [0.6, 0.6, 0.6, 0.6, 0.5]
