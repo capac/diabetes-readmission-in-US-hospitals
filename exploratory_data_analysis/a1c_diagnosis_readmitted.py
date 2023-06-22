@@ -3,13 +3,15 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import os
 from pathlib import Path
 
-home = os.environ['HOME']
-
-work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/diabetes-in-130-US-hospitals/'
+work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
+                        'uci-ml-repository/diabetes-in-130-US-hospitals/'
 data_file = work_dir / 'data/diabetic_data.csv'
+
+# bar plot style with directory path
+barplot_style = work_dir / 'barplot-style.mplstyle'
+plt.style.use(barplot_style)
 
 df = pd.read_csv(data_file, na_values='?', low_memory=False)
 obj_cols = df.select_dtypes('object').columns
@@ -64,7 +66,7 @@ diab_others_list = ['Diabetes', 'Others', 'Others']
 char_list = ['250.', 'E', 'V']
 
 for diag_name, char in zip(diab_others_list, char_list):
-    df.loc[:, diag_name+'_col'] = np.array([np.nan for _ in range(df.shape[0])])
+    df[diag_name+'_col'] = np.array([np.nan for _ in range(df.shape[0])])
     filter_ = df['diag_1'].str.contains(char)
     df.loc[filter_, diag_name+'_col'] = np.array([diag_name for i in range(filter_.sum())])
 
@@ -90,12 +92,19 @@ title_list = ['Percentage of HbA1c measurements',
               'Percentage of readmissions']
 wd_list = [0.6, 0.6, 0.5]
 
+# colors
+plt.rcParams['ytick.major.pad'] = -8
+prop_cycle = plt.rcParams['axes.prop_cycle']
+colors = prop_cycle.by_key()['color']
+
 # plot
-fig, axes = plt.subplots(1, 3, figsize=(14, 4))
+fig, axes = plt.subplots(1, 3, figsize=(15, 4))
 for df, ax, title, wd in zip(df_list, axes, title_list, wd_list):
-    ax.bar(df.iloc[:, 0], df.iloc[:, 1], color=plt.cm.Paired.colors, edgecolor='k', width=wd)
-    plt.setp(ax.get_xticklabels(), ha="right", rotation_mode="anchor", rotation=45, fontsize=10)
+    ax.bar(df.iloc[:, 0], df.iloc[:, 1], color=colors, width=wd)
+    plt.setp(ax.get_xticklabels(), ha="right", rotation_mode="anchor",
+             rotation=45, fontsize=10)
     plt.setp(ax.get_yticklabels(), fontsize=10)
     ax.set_ylabel('Percent (%)', fontsize=10)
     ax.set_title(title, fontsize=12)
-plt.savefig('plots/a1c_diagnosis_readmitted.png', dpi=288, bbox_inches='tight')
+plt.savefig(work_dir / 'exploratory_data_analysis/plots/'
+            'a1c_diagnosis_readmitted.png')
