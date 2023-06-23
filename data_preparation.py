@@ -6,10 +6,12 @@ from pathlib import Path
 from imblearn.over_sampling import RandomOverSampler
 from sklearn.preprocessing import StandardScaler
 
-work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/uci-ml-repository/diabetes-in-130-US-hospitals'
+work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
+                         'uci-ml-repository/diabetes-in-130-US-hospitals'
 
 # loading data into data frame
-df = pd.read_csv(work_dir / 'data/diabetic_data.csv', na_values='?', low_memory=False)
+df = pd.read_csv(work_dir / 'data/diabetic_data.csv',
+                 na_values='?', low_memory=False)
 obj_cols = df.select_dtypes('object').columns
 df[obj_cols] = df[obj_cols].astype('category')
 
@@ -18,12 +20,15 @@ df = df.loc[df.race.notnull()]
 df = df.loc[df.gender != 'Unknown/Invalid', :]
 
 # dropping categories due to high presence of NaN / null values
-df.drop(['weight', 'medical_specialty', 'payer_code', 'encounter_id'], axis=1, inplace=True)
+df.drop(['weight', 'medical_specialty', 'payer_code', 'encounter_id'],
+        axis=1, inplace=True)
 
 # converting null/unmapped values in `admission_type_id`, `discharge_disposition_id` and `admission_source_id` to NaN.
 df['admission_type_id'] = df['admission_type_id'].replace([5, 6, 8], np.nan)
-df['discharge_disposition_id'] = df['discharge_disposition_id'].replace([18, 25, 26], np.nan)
-df['admission_source_id'] = df['admission_source_id'].replace([9, 15, 17, 20, 21], np.nan)
+df['discharge_disposition_id'] = df['discharge_disposition_id'].\
+    replace([18, 25, 26], np.nan)
+df['admission_source_id'] = df['admission_source_id'].\
+    replace([9, 15, 17, 20, 21], np.nan)
 id_list = ['admission_type_id', 'discharge_disposition_id', 'admission_source_id']
 df[id_list] = df[id_list].astype('category')
 
@@ -31,8 +36,10 @@ df[id_list] = df[id_list].astype('category')
 df = df[~df['discharge_disposition_id'].isin([11, 19, 20, 21])]
 
 # creating new column called `service_use`
-df['service_use'] = df['number_outpatient'] + df['number_emergency'] + df['number_inpatient']
-df.drop(['number_outpatient', 'number_emergency', 'number_inpatient'], axis=1, inplace=True)
+df['service_use'] = df['number_outpatient'] + df['number_emergency'] +\
+      df['number_inpatient']
+df.drop(['number_outpatient', 'number_emergency', 'number_inpatient'],
+        axis=1, inplace=True)
 
 # dropping all rows with NaNs
 df.dropna(how='any', inplace=True)
@@ -63,18 +70,22 @@ diagnosis_names = ['Circulatory', 'Respiratory', 'Digestive', 'Injury',
 diag_col, index = 'diag_1', 1
 
 for diag_name, diag_list in zip(diagnosis_names, diagnosis_list):
-    df.loc[:, diag_name+'_'+str(index)+'_col'] = np.array([np.nan for i in range(df.shape[0])])
+    df.loc[:, diag_name+'_'+str(index)+'_col'] = \
+        np.array([np.nan for _ in range(df.shape[0])])
     filter_ = df[diag_col].isin(diag_list)
-    df.loc[filter_, diag_name+'_'+str(index)+'_col'] = np.array([diag_name for i in range(filter_.sum())])
+    df.loc[filter_, diag_name+'_'+str(index)+'_col'] = \
+        np.array([diag_name for _ in range(filter_.sum())])
 
 # other diagnosis
 diab_others_list = ['Diabetes', 'Others', 'Others']
 char_list = ['250.', 'E', 'V']
 
 for diag_name, char in zip(diab_others_list, char_list):
-    df.loc[:, diag_name+'_'+str(index)+'_col'] = np.array([np.nan for i in range(df.shape[0])])
+    df.loc[:, diag_name+'_'+str(index)+'_col'] = \
+        np.array([np.nan for _ in range(df.shape[0])])
     filter_ = df[diag_col].str.contains(char)
-    df.loc[filter_, diag_name+'_'+str(index)+'_col'] = np.array([diag_name for i in range(filter_.sum())])
+    df.loc[filter_, diag_name+'_'+str(index)+'_col'] = \
+        np.array([diag_name for _ in range(filter_.sum())])
 
 # dropping all three diagnosis columns
 df.drop(['diag_1', 'diag_2', 'diag_3'], axis=1, inplace=True)
@@ -114,7 +125,8 @@ for cat in two_category_list:
     df[cat] = df[cat].replace(['No', 'Steady'], [0, 1])
 for cat in four_category_list:
     df[cat] = df[cat].replace(['Down', 'No', 'Steady', 'Up'], [0, 1, 1, 2])
-df['max_glu_serum'] = df['max_glu_serum'].replace(['None', 'Norm', '>200', '>300'], [0, 1, 2, 2])
+df['max_glu_serum'] = df['max_glu_serum'].\
+    replace(['None', 'Norm', '>200', '>300'], [0, 1, 2, 2])
 df['A1Cresult'] = df['A1Cresult'].replace(['None', 'Norm', '>7', '>8'], [0, 1, 2, 2])
 df['acarbose'] = df['acarbose'].replace(['No', 'Steady', 'Up'], [0, 1, 2])
 df['change'] = df['change'].replace(['No', 'Ch'], [0, 1])
@@ -122,16 +134,19 @@ df['diabetesMed'] = df['diabetesMed'].replace(['No', 'Yes'], [0, 1])
 df['race'] = df['race'].replace(race_list, [0, 1, 2, 3, 4])
 df['gender'] = df['gender'].replace(gender_list, [0, 1])
 df['age'] = df['age'].replace(age_list, [15, 25, 35, 45, 55, 65, 75, 85, 95, 5])
-df['primary_diag'] = df['primary_diag'].replace(primary_diag_list, [0, 1, 2, 3, 4, 5, 6, 7, 8])
+df['primary_diag'] = df['primary_diag'].\
+    replace(primary_diag_list, [0, 1, 2, 3, 4, 5, 6, 7, 8])
 df[['race', 'gender', 'age']] = df[['race', 'gender', 'age']].astype('category')
 
 # making sure caetgory features are such
-cat_list = ['max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide', 'nateglinide',
-            'chlorpropamide', 'glimepiride', 'acetohexamide', 'glipizide', 'glyburide',
-            'tolbutamide', 'pioglitazone', 'rosiglitazone', 'acarbose', 'miglitol',
-            'troglitazone', 'tolazamide', 'insulin', 'glyburide-metformin', 'glipizide-metformin',
-            'metformin-pioglitazone', 'change', 'diabetesMed', 'readmitted', 'primary_diag',
-            'admission_type_id', 'discharge_disposition_id', 'admission_source_id']
+cat_list = ['max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide',
+            'nateglinide', 'chlorpropamide', 'glimepiride', 'acetohexamide',
+            'glipizide', 'glyburide', 'tolbutamide', 'pioglitazone',
+            'rosiglitazone', 'acarbose', 'miglitol', 'troglitazone',
+            'tolazamide', 'insulin', 'glyburide-metformin', 'glipizide-metformin',
+            'metformin-pioglitazone', 'change', 'diabetesMed', 'readmitted',
+            'primary_diag', 'admission_type_id', 'discharge_disposition_id',
+            'admission_source_id']
 df[cat_list] = df[cat_list].astype('category')
 
 # are there null values?
