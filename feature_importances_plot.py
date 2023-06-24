@@ -7,7 +7,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 
-work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/uci-ml-repository/diabetes-in-130-US-hospitals'
+plt.style.use('barplot-style.mplstyle')
+
+work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
+                         'uci-ml-repository/diabetes-in-130-US-hospitals'
 df = pd.read_csv(work_dir / 'data/df_encoded.csv')
 
 X = df.drop('readmitted', axis=1)
@@ -25,10 +28,12 @@ sorted_features_df = pd.DataFrame({'col_name': rf_clf.feature_importances_,
                                   index=X.columns).sort_values(by='col_name',
                                                                ascending=False)
 
-fig, axes = plt.subplots(figsize=(9, 5))
+prop_cycle = plt.rcParams['axes.prop_cycle']
+colors = prop_cycle.by_key()['color']
+fig, axes = plt.subplots()
 axes.bar(sorted_features_df.index, sorted_features_df['col_name'],
-         color=plt.cm.Paired.colors, edgecolor='k', yerr=sorted_features_df['std_err'])
-plt.setp(axes.get_xticklabels(), ha="right", rotation_mode="anchor", rotation=45, fontsize=10)
-plt.setp(axes.get_yticklabels(), fontsize=10)
-axes.set_title('Feature importances', fontsize=14)
-plt.savefig('plots/feature_importances.png', dpi=288, bbox_inches='tight')
+         yerr=sorted_features_df['std_err'], color=colors)
+plt.setp(axes.get_xticklabels(), ha="right",
+         rotation_mode="anchor", rotation=45)
+axes.set_title('Feature importances')
+plt.savefig('plots/feature_importances.png')
