@@ -3,7 +3,6 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from imblearn.over_sampling import RandomOverSampler
 from sklearn.preprocessing import StandardScaler
 
 work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
@@ -12,8 +11,8 @@ work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
 # loading data into data frame
 df = pd.read_csv(work_dir / 'data/diabetic_data.csv',
                  na_values='?', low_memory=False)
-obj_cols = df.select_dtypes('object').columns
-df[obj_cols] = df[obj_cols].astype('category')
+# obj_cols = df.select_dtypes('object').columns
+# df[obj_cols] = df[obj_cols].astype('object')
 
 # removing NaN or null values
 df = df.loc[df.race.notnull()]
@@ -32,7 +31,7 @@ df['admission_source_id'] = df['admission_source_id'].\
     replace([9, 15, 17, 20, 21], np.nan)
 id_list = ['admission_type_id', 'discharge_disposition_id',
            'admission_source_id']
-df[id_list] = df[id_list].astype('category')
+df[id_list] = df[id_list].astype('object')
 
 # consolidating all variations of `Expired at...` and removing them
 df = df[~df['discharge_disposition_id'].isin([11, 19, 20, 21])]
@@ -43,15 +42,21 @@ df['service_use'] = df['number_outpatient'] + df['number_emergency'] +\
 df.drop(['number_outpatient', 'number_emergency', 'number_inpatient'],
         axis=1, inplace=True)
 
-# dropping all rows with NaNs
-df.dropna(how='any', inplace=True)
-
 # dropping all duplicate data
 df.drop_duplicates(['patient_nbr'], inplace=True)
 df.drop(['patient_nbr'], axis=1, inplace=True)
 
 # dropping `citoglipton` and `examide` for lack of discriminatory information
 df = df.drop(['citoglipton', 'examide'], axis=1)
+
+# change np.nan to 'None' in 'max_glu_serum' column
+df[['max_glu_serum', 'A1Cresult']] = \
+    df[['max_glu_serum', 'A1Cresult']].astype('object')
+df[['max_glu_serum', 'A1Cresult']] = \
+    df[['max_glu_serum', 'A1Cresult']].fillna('None')
+
+# dropping all rows with NaNs
+df.dropna(how='any', inplace=True)
 
 # grouping primary diagnosis values into group categories
 circulatory_list = [str(f) for f in list(range(390, 460)) + [785]]
@@ -67,27 +72,26 @@ diagnosis_list = [circulatory_list, respiratory_list, digestive_list,
                   neoplasms_list]
 diagnosis_names = ['Circulatory', 'Respiratory', 'Digestive', 'Injury',
                    'Musculoskeletal', 'Genitourinary', 'Neoplasms']
-
 # selection on primary diagnosis
 diag_col, index = 'diag_1', 1
 
 for diag_name, diag_list in zip(diagnosis_names, diagnosis_list):
-    df.loc[:, diag_name+'_'+str(index)+'_col'] = \
-        np.array([np.nan for _ in range(df.shape[0])])
-    filter_ = df[diag_col].isin(diag_list)
-    df.loc[filter_, diag_name+'_'+str(index)+'_col'] = \
-        np.array([diag_name for _ in range(filter_.sum())])
+    mask = df[diag_col].isin(diag_list)
+    new_col_name = diag_name+'_'+str(index)+'_col'
+    # df[new_col_name] = mask.astype('object')
+    df.loc[mask, new_col_name] = \
+        np.array([diag_name for _ in range(mask.sum())], dtype='object')
 
 # other diagnosis
 diab_others_list = ['Diabetes', 'Others', 'Others']
 char_list = ['250.', 'E', 'V']
 
 for diag_name, char in zip(diab_others_list, char_list):
-    df.loc[:, diag_name+'_'+str(index)+'_col'] = \
-        np.array([np.nan for _ in range(df.shape[0])])
-    filter_ = df[diag_col].str.contains(char)
-    df.loc[filter_, diag_name+'_'+str(index)+'_col'] = \
-        np.array([diag_name for _ in range(filter_.sum())])
+    new_col_name = diag_name+'_'+str(index)+'_col'
+    mask = df[diag_col].str.contains(char)
+    df[new_col_name] = mask.astype('object')
+    df.loc[mask, new_col_name] = \
+        np.array([diag_name for _ in range(mask.sum())])
 
 # dropping all three diagnosis columns
 df.drop(['diag_1', 'diag_2', 'diag_3'], axis=1, inplace=True)
@@ -95,15 +99,15 @@ df.drop(['diag_1', 'diag_2', 'diag_3'], axis=1, inplace=True)
 # adding `diabetes` and `others` categories
 diag_list = [col+'_1'+'_col' for col in
              diagnosis_names + ['Diabetes', 'Others']]
-df['primary_diag'] = df[diag_list].fillna(axis=1, method='bfill').iloc[:, 0]
-df['primary_diag'].fillna(value='Others', inplace=True)
-df['primary_diag'] = df['primary_diag'].astype('category')
+df['primary_diag'] = df[diag_list].fillna('Others', axis=1).iloc[:, 0]
+df['primary_diag'] = df['primary_diag'].astype('object')
 df.drop(diag_list, axis=1, inplace=True)
 
 # non-readmitted cases, NO and >30 -> 0; readmitted cases, <30 -> 1
-df['readmitted'].replace('<30', '1', inplace=True)
-df['readmitted'].replace(['>30', 'NO'], '0', inplace=True)
-df['readmitted'] = df['readmitted'].astype('int64')
+df['readmitted'] = df['readmitted'].replace({'<30': '1'})
+df['readmitted'] = df['readmitted'].replace({'>30': '0'})
+df['readmitted'] = df['readmitted'].replace({'NO': '0'})
+df['readmitted'] = df['readmitted'].astype('object')
 
 # resetting index
 df.reset_index(inplace=True, drop=True)
@@ -133,24 +137,50 @@ primary_diag_list = ['Others', 'Neoplasms', 'Circulatory',
 # category features are coded to numeric values
 df.drop(one_category_list, axis=1, inplace=True)
 for cat in two_category_list:
-    df[cat] = df[cat].replace(['No', 'Steady'], [0, 1])
+    df[cat] = df[cat].replace({key: val for key, val in zip(['No', 'Steady'],
+                                                            ['0', '1'])})
 for cat in four_category_list:
-    df[cat] = df[cat].replace(['Down', 'No', 'Steady', 'Up'], [0, 1, 1, 2])
+    df[cat] = df[cat].replace({key: val for key, val in
+                               zip(['Down', 'No', 'Steady', 'Up'],
+                                   ['0', '1', '1', '2'])})
+df[four_category_list] = df[four_category_list].astype('object')
 df['max_glu_serum'] = df['max_glu_serum'].\
-    replace(['None', 'Norm', '>200', '>300'], [0, 1, 2, 2])
-df['A1Cresult'] = df['A1Cresult'].replace(['None', 'Norm', '>7', '>8'],
-                                          [0, 1, 2, 2])
-df['acarbose'] = df['acarbose'].replace(['No', 'Steady', 'Up'], [0, 1, 2])
-df['change'] = df['change'].replace(['No', 'Ch'], [0, 1])
-df['diabetesMed'] = df['diabetesMed'].replace(['No', 'Yes'], [0, 1])
-df['race'] = df['race'].replace(race_list, [0, 1, 2, 3, 4])
-df['gender'] = df['gender'].replace(gender_list, [0, 1])
-df['age'] = df['age'].replace(age_list, [15, 25, 35, 45, 55,
-                                         65, 75, 85, 95, 5])
+    replace({key: val for key, val in
+             zip(['None', 'Norm', '>200', '>300'],
+                 ['0', '1', 2, '2'])})
+df['A1Cresult'] = df['A1Cresult'].\
+    replace({key: val for key, val in
+             zip(['None', 'Norm', '>7', '>8'],
+                 ['0', '1', 2, '2'])})
+df['acarbose'] = df['acarbose'].\
+    replace({key: val for key, val in
+             zip(['No', 'Steady', 'Up'],
+                 ['0', '1', '2'])})
+df['change'] = df['change'].\
+    replace({key: val for key, val in
+             zip(['No', 'Ch'], ['0', '1'])})
+df['diabetesMed'] = df['diabetesMed'].\
+    replace({key: val for key, val in
+             zip(['No', 'Yes'], ['0', '1'])})
+df['race'] = df['race'].\
+    replace({key: val for key, val in
+             zip(race_list,
+                 [str(f) for f in range(5)])})
+df['gender'] = df['gender'].\
+    replace({key: val for key, val in
+             zip(gender_list, ['0', '1'])})
+df['age'] = df['age'].\
+    replace({key: val for key, val in
+             zip(age_list,
+                 [str(f) for f in
+                  list(range(15, 96, 10)) + [5]])})
 df['primary_diag'] = df['primary_diag'].\
-    replace(primary_diag_list, [0, 1, 2, 3, 4, 5, 6, 7, 8])
-df[['race', 'gender', 'age']] = \
-    df[['race', 'gender', 'age']].astype('category')
+    replace({key: val for key, val in
+             zip(primary_diag_list, [str(f) for f in list(range(9))])})
+
+change_cat_list = ['max_glu_serum', 'A1Cresult', 'acarbose', 'change',
+                   'diabetesMed', 'race', 'gender', 'age', 'primary_diag']
+df[change_cat_list] = df[change_cat_list].astype('object')
 
 # making sure caetgory features are such
 cat_list = ['max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide',
@@ -162,24 +192,12 @@ cat_list = ['max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide',
             'diabetesMed', 'readmitted', 'primary_diag',
             'admission_type_id', 'discharge_disposition_id',
             'admission_source_id']
-df[cat_list] = df[cat_list].astype('category')
+df[cat_list] = df[cat_list].astype('object')
 
 # are there null values?
-# print(f'Null values: \n{df.isnull().any()}')
-
-# SMOTE: Synthetic Minority Over-sampling Technique
-# When dealing with mixed data type such as continuous and categorical
-# features, none of the presented methods (apart of the class
-# RandomOverSampler) can deal with the categorical features.
-# https://imbalanced-learn.org/stable/over_sampling.html#smote-variants
-input_features = list(set(df.columns) - set(['readmitted']))
-X, y = df[input_features], df['readmitted']
-sm = RandomOverSampler(sampling_strategy='minority')
-X_new, y_new = sm.fit_resample(X, y)
-df = pd.concat([X_new, y_new], axis=1)
-
-# are there null values?
-# print(f'Null values after RandomOverSampler: \n{df.isnull().any()}')
+# print(f'Null values: \n{df.isnull().any()}\n')
+print(f'Dataframe shape:{df.shape}')
+print(f'Readmitted cases count: {df.readmitted.value_counts()}')
 
 # standardize numeric data
 scaler_encoder = StandardScaler()
