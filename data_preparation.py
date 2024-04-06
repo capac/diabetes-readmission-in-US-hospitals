@@ -74,13 +74,16 @@ diagnosis_names = ['Circulatory', 'Respiratory', 'Digestive', 'Injury',
                    'Musculoskeletal', 'Genitourinary', 'Neoplasms']
 # selection on primary diagnosis
 diag_col, index = 'diag_1', 1
+df['primary_diag'] = np.array(['Others' for _ in range(df.shape[0])],
+                              dtype='object')
 
 for diag_name, diag_list in zip(diagnosis_names, diagnosis_list):
     mask = df[diag_col].isin(diag_list)
-    new_col_name = diag_name+'_'+str(index)+'_col'
-    # df[new_col_name] = mask.astype('object')
-    df.loc[mask, new_col_name] = \
+    # print(f'mask[:10]: {mask[:10]}')
+    # new_col_name = diag_name+'_'+str(index)+'_col'
+    df.loc[mask, 'primary_diag'] = \
         np.array([diag_name for _ in range(mask.sum())], dtype='object')
+    # print(f'new df.head():\n{df.loc[:, new_col_name].head(20)}')
 
 # other diagnosis
 diab_others_list = ['Diabetes', 'Others', 'Others']
@@ -89,19 +92,19 @@ char_list = ['250.', 'E', 'V']
 for diag_name, char in zip(diab_others_list, char_list):
     new_col_name = diag_name+'_'+str(index)+'_col'
     mask = df[diag_col].str.contains(char)
-    df[new_col_name] = mask.astype('object')
-    df.loc[mask, new_col_name] = \
+    # df[new_col_name] = mask.astype('object')
+    df.loc[mask, 'primary_diag'] = \
         np.array([diag_name for _ in range(mask.sum())])
 
 # dropping all three diagnosis columns
 df.drop(['diag_1', 'diag_2', 'diag_3'], axis=1, inplace=True)
 
-# adding `diabetes` and `others` categories
-diag_list = [col+'_1'+'_col' for col in
-             diagnosis_names + ['Diabetes', 'Others']]
-df['primary_diag'] = df[diag_list].fillna('Others', axis=1).iloc[:, 0]
+# adding `diabetes` and `others` categories to 'diagnosis_list'
+# diag_list = [col+'_1'+'_col' for col in
+#              diagnosis_names + ['Diabetes', 'Others']]
+df['primary_diag'] = df['primary_diag'].fillna('Others')
 df['primary_diag'] = df['primary_diag'].astype('object')
-df.drop(diag_list, axis=1, inplace=True)
+# df.drop(diag_list, axis=1, inplace=True)
 
 # non-readmitted cases, NO and >30 -> 0; readmitted cases, <30 -> 1
 df['readmitted'] = df['readmitted'].replace({'<30': '1'})
@@ -147,11 +150,11 @@ df[four_category_list] = df[four_category_list].astype('object')
 df['max_glu_serum'] = df['max_glu_serum'].\
     replace({key: val for key, val in
              zip(['None', 'Norm', '>200', '>300'],
-                 ['0', '1', 2, '2'])})
+                 ['0', '1', '2', '2'])})
 df['A1Cresult'] = df['A1Cresult'].\
     replace({key: val for key, val in
              zip(['None', 'Norm', '>7', '>8'],
-                 ['0', '1', 2, '2'])})
+                 ['0', '1', '2', '2'])})
 df['acarbose'] = df['acarbose'].\
     replace({key: val for key, val in
              zip(['No', 'Steady', 'Up'],
@@ -182,7 +185,7 @@ change_cat_list = ['max_glu_serum', 'A1Cresult', 'acarbose', 'change',
                    'diabetesMed', 'race', 'gender', 'age', 'primary_diag']
 df[change_cat_list] = df[change_cat_list].astype('object')
 
-# making sure caetgory features are such
+# listing category features as 'object'
 cat_list = ['max_glu_serum', 'A1Cresult', 'metformin', 'repaglinide',
             'nateglinide', 'chlorpropamide', 'glimepiride', 'acetohexamide',
             'glipizide', 'glyburide', 'tolbutamide', 'pioglitazone',
@@ -201,7 +204,7 @@ print(f'Readmitted cases count: {df.readmitted.value_counts()}')
 
 # standardize numeric data
 scaler_encoder = StandardScaler()
-num_cols = df.select_dtypes('int64').columns
+num_cols = df.select_dtypes('int').columns
 df_num = df[num_cols]
 X_num = scaler_encoder.fit_transform(df_num)
 df_num = pd.DataFrame(X_num, index=df_num.index, columns=num_cols)
