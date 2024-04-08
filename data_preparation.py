@@ -3,7 +3,9 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from sklearn.preprocessing import StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.pipeline import make_pipeline
 
 work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
                          'uci-ml-repository/diabetes-in-130-US-hospitals'
@@ -202,14 +204,21 @@ df[cat_list] = df[cat_list].astype('object')
 print(f'Dataframe shape:{df.shape}')
 print(f'Readmitted cases count: {df.readmitted.value_counts()}')
 
-# standardize numeric data
-scaler_encoder = StandardScaler()
-num_cols = df.select_dtypes('int').columns
-df_num = df[num_cols]
-X_num = scaler_encoder.fit_transform(df_num)
-df_num = pd.DataFrame(X_num, index=df_num.index, columns=num_cols)
-df_cat = df.drop(num_cols, axis=1)
-df = pd.concat([df_num, df_cat], axis=1)
+# standardize numeric data and generate one-hot encoded data features
+num_attrib = df.select_dtypes('int').columns
+cat_attrib = df.select_dtypes('object').columns
+
+num_pipeline = make_pipeline(StandardScaler())
+cat_pipeline = make_pipeline(OneHotEncoder())
+
+preprocessing = ColumnTransformer([
+    ('num', num_pipeline, num_attrib),
+    ('cat', cat_pipeline, cat_attrib)
+    ])
+
+arr_prepared = preprocessing.fit_transform(df)
+prepared_columns = preprocessing.get_feature_names_out()
+df_prepared = pd.DataFrame(arr_prepared, columns=prepared_columns)
 
 # saving dataframe to CSV file
 df.to_csv('data/df_encoded.csv', index=False)
