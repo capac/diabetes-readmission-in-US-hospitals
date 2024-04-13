@@ -13,9 +13,6 @@ num_cols = ['time_in_hospital', 'num_lab_procedures', 'num_procedures',
             'num_medications', 'number_outpatient', 'number_emergency',
             'number_inpatient', 'number_diagnoses']
 
-# print(df.select_dtypes(np.number).columns.to_list())
-# df['race'] = df['race'].factorize()[0]
-# df['readmitted'] = df['readmitted'].factorize()[0]
 corrs = df[num_cols].corr(numeric_only=True)
 
 fig, axes = plt.subplots(figsize=(10, 6))
