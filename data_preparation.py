@@ -62,10 +62,6 @@ print(f'Dataframe shape:{df.shape}')
 # dropping `citoglipton` and `examide` for lack of discriminatory information
 df = df.drop(['citoglipton', 'examide'], axis=1)
 
-# converting 'max_glu_serum', 'A1Cresult' to type string
-df[['max_glu_serum', 'A1Cresult']] = \
-    df[['max_glu_serum', 'A1Cresult']].astype('string')
-
 # change np.nan to 'None' in 'max_glu_serum' and 'A1Cresult' columns
 df[['max_glu_serum', 'A1Cresult']] = \
     df[['max_glu_serum', 'A1Cresult']].fillna('None')
@@ -113,52 +109,80 @@ for diag_name, char in zip(diab_others_list, char_list):
 # dropping all three diagnosis columns
 df.drop(['diag_1', 'diag_2', 'diag_3'], axis=1, inplace=True)
 
-# converting 'primary_diag' data type to 'string'
-df['primary_diag'] = df['primary_diag'].astype('string')
-
 # non-readmitted cases, NO and >30 -> 0; readmitted cases, <30 -> 1
 df['readmitted'] = df['readmitted'].replace({'<30': '1'})
 df['readmitted'] = df['readmitted'].replace({'>30': '0'})
 df['readmitted'] = df['readmitted'].replace({'NO': '0'})
-df['readmitted'] = df['readmitted'].astype('string')
 
 # resetting index
 df.reset_index(inplace=True, drop=True)
 
-# category lists
+# one category lists
 one_category_list = ['glimepiride-pioglitazone',
                      'metformin-rosiglitazone']  # No
+df.drop(one_category_list, axis=1, inplace=True)
+
+# two category list
 two_category_list = ['acetohexamide', 'tolbutamide',
                      'troglitazone', 'tolazamide',
                      'glipizide-metformin',
                      'metformin-pioglitazone']  # 'No', 'Steady'
+for cat in two_category_list:
+    df[cat] = df[cat].replace({key: val for key, val in zip(['No', 'Steady'],
+                                                            ['0', '1'])})
+df[two_category_list] = df[two_category_list].astype('string')
+
+# four category list
 four_category_list = ['metformin', 'repaglinide',
                       'nateglinide', 'chlorpropamide',
                       'glimepiride', 'glipizide',
                       'glyburide', 'pioglitazone',
                       'rosiglitazone', 'glyburide-metformin',
                       'insulin', 'miglitol']  # 'No', 'Steady', 'Up', 'Down'
-race_list = ['Caucasian', 'AfricanAmerican',
-             'Other', 'Asian', 'Hispanic']
-gender_list = ['Female', 'Male']
-age_list = ['[10-20)', '[20-30)', '[30-40)', '[40-50)',
-            '[50-60)', '[60-70)', '[70-80)', '[80-90)',
-            '[90-100)', '[0-10)']
-primary_diag_list = ['Others', 'Neoplasms', 'Circulatory',
-                     'Diabetes', 'Respiratory',
-                     'Injury', 'Genitourinary',
-                     'Musculoskeletal', 'Digestive']
-
-# category features are coded as strings
-df.drop(one_category_list, axis=1, inplace=True)
-for cat in two_category_list:
-    df[cat] = df[cat].replace({key: val for key, val in zip(['No', 'Steady'],
-                                                            ['0', '1'])})
 for cat in four_category_list:
     df[cat] = df[cat].replace({key: val for key, val in
                                zip(['Down', 'No', 'Steady', 'Up'],
                                    ['0', '1', '1', '2'])})
-df[four_category_list] = df[four_category_list].astype('object')
+df[four_category_list] = df[four_category_list].astype('string')
+
+# race list
+race_list = ['Caucasian', 'AfricanAmerican',
+             'Other', 'Asian', 'Hispanic']
+df['race'] = df['race'].\
+    replace({key: val for key, val in
+             zip(race_list,
+                 [str(f) for f in range(5)])})
+df['race'] = df['race'].astype('string')
+
+# gender list
+gender_list = ['Female', 'Male']
+df['gender'] = df['gender'].\
+    replace({key: val for key, val in
+             zip(gender_list, ['0', '1'])})
+df['gender'] = df['gender'].astype('string')
+
+# age list
+age_list = ['[10-20)', '[20-30)', '[30-40)', '[40-50)',
+            '[50-60)', '[60-70)', '[70-80)', '[80-90)',
+            '[90-100)', '[0-10)']
+df['age'] = df['age'].\
+    replace({key: val for key, val in
+             zip(age_list,
+                 [str(f) for f in
+                  list(range(15, 96, 10)) + [5]])})
+df['age'] = df['age'].astype('string')
+
+# primary diagnosis list
+primary_diag_list = ['Others', 'Neoplasms', 'Circulatory',
+                     'Diabetes', 'Respiratory',
+                     'Injury', 'Genitourinary',
+                     'Musculoskeletal', 'Digestive']
+df['primary_diag'] = df['primary_diag'].\
+    replace({key: val for key, val in
+             zip(primary_diag_list, [str(f) for f in list(range(9))])})
+df['primary_diag'] = df['primary_diag'].astype('string')
+
+
 df['max_glu_serum'] = df['max_glu_serum'].\
     replace({key: val for key, val in
              zip(['None', 'Norm', '>200', '>300'],
@@ -177,32 +201,8 @@ df['change'] = df['change'].\
 df['diabetesMed'] = df['diabetesMed'].\
     replace({key: val for key, val in
              zip(['No', 'Yes'], ['0', '1'])})
-df['race'] = df['race'].\
-    replace({key: val for key, val in
-             zip(race_list,
-                 [str(f) for f in range(5)])})
-df['gender'] = df['gender'].\
-    replace({key: val for key, val in
-             zip(gender_list, ['0', '1'])})
-df['age'] = df['age'].\
-    replace({key: val for key, val in
-             zip(age_list,
-                 [str(f) for f in
-                  list(range(15, 96, 10)) + [5]])})
-df['primary_diag'] = df['primary_diag'].\
-    replace({key: val for key, val in
-             zip(primary_diag_list, [str(f) for f in list(range(9))])})
-
-# saved all category features as 'object' data types
-cat_list = ['max_glu_serum', 'A1Cresult', 'acarbose', 'change',
-            'nateglinide', 'chlorpropamide', 'glimepiride',
-            'glipizide', 'glyburide', 'tolbutamide', 'pioglitazone',
-            'rosiglitazone', 'miglitol', 'troglitazone', 'acetohexamide',
-            'tolazamide', 'insulin', 'glyburide-metformin',
-            'glipizide-metformin', 'metformin-pioglitazone', 'metformin',
-            'diabetesMed', 'repaglinide', 'readmitted', 'primary_diag',
-            'admission_type_id', 'discharge_disposition_id',
-            'admission_source_id', 'race', 'gender', 'age']
+cat_list = ['max_glu_serum', 'A1Cresult', 'acarbose',
+            'change', 'diabetesMed']
 df[cat_list] = df[cat_list].astype('string')
 
 # final dataframe shape
