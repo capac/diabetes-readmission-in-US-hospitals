@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# from time import time
+from time import time
 from pathlib import Path
 import pandas as pd
 import numpy as np
@@ -60,51 +60,18 @@ def preprocessing_data(X_train, X_test):
     )
 
     # output dataframe from preprocessing pipeline
-    X_train_preprocessed = preprocessing.fit_transform(X_train)
-    X_train_preprocessed_columns = preprocessing.get_feature_names_out()
-    X_test_preprocessed = preprocessing.transform(X_test)
-    X_test_preprocessed_columns = preprocessing.get_feature_names_out()
-    X_train_preprocessed = pd.DataFrame(X_train_preprocessed,
-                                        columns=X_train_preprocessed_columns,
-                                        index=X_train.index,)
-    X_test_preprocessed = pd.DataFrame(X_test_preprocessed,
-                                       columns=X_test_preprocessed_columns,
-                                       index=X_test.index,)
-    return X_train_preprocessed, X_test_preprocessed
+    X_train_pp = preprocessing.fit_transform(X_train)
+    X_train_pp_columns = preprocessing.get_feature_names_out()
+    X_test_pp = preprocessing.transform(X_test)
+    X_test_pp_columns = preprocessing.get_feature_names_out()
+    X_train_pp = pd.DataFrame(X_train_pp, columns=X_train_pp_columns,
+                              index=X_train.index,)
+    X_test_pp = pd.DataFrame(X_test_pp, columns=X_test_pp_columns,
+                             index=X_test.index,)
+    return X_train_pp, X_test_pp
 
 
-X_train_preprocessed, X_test_preprocessed = preprocessing_data(X_train, X_test)
-# SMOTE: Synthetic Minority Over-sampling Technique
-# When dealing with mixed data type such as continuous and categorical
-# features, none of the presented methods (apart of the class
-# RandomOverSampler) can deal with the categorical features.
-# https://imbalanced-learn.org/stable/over_sampling.html#smote-variants
-
-
-def oversample_and_fit_model(model_name):
-    model = make_pipeline_imblearn(RandomOverSampler(
-        sampling_strategy="minority",
-        random_state=0),
-                   model_dict[model_name])
-    cv_results = cross_validate(model, X_train_preprocessed, y_train,
-                                scoring="accuracy", return_train_score=True,
-                                return_estimator=True, n_jobs=-1,
-                                error_score='raise')
-    print(
-        f"Training accuracy mean +/- std. dev. for {model_name}: "
-        f"{cv_results['test_score'].mean():.3f} +/- "
-        f"{cv_results['test_score'].std():.3f}"
-    )
-    scores = []
-    for cv_model in cv_results["estimator"]:
-        scores.append(accuracy_score(y_test,
-                                     cv_model.predict(X_test_preprocessed)))
-    print(
-        f"Testing accuracy mean +/- std. dev. for {model_name}: "
-        f"{np.mean(scores):.3f} +/- {np.std(scores):.3f}"
-        f"\n"
-    )
-
+X_train_pp, X_test_pp = preprocessing_data(X_train, X_test)
 
 # testing several data science algorithms
 model_dict = {
@@ -118,27 +85,41 @@ model_dict = {
                                                        n_estimators=160,),
 }
 
-for name in model_dict.keys():
-    oversample_and_fit_model(name)
+# SMOTE: Synthetic Minority Over-sampling Technique
+# When dealing with mixed data type such as continuous and categorical
+# features, none of the presented methods (apart of the class
+# RandomOverSampler) can deal with the categorical features.
+# https://imbalanced-learn.org/stable/over_sampling.html#smote-variants
 
+t0 = time()
+with open(work_dir / "stats_output.txt", "w") as f:
+    print("Calculating model accuracy...")
+    for name, model in model_dict.items():
+        pipeline = make_pipeline_imblearn(
+            RandomOverSampler(sampling_strategy="minority", random_state=0),
+            model)
+        cv_results = cross_validate(pipeline, X_train_pp,
+                                    y_train, scoring="accuracy",
+                                    return_train_score=True,
+                                    return_estimator=True,
+                                    n_jobs=-1, error_score='raise')
+        f.writelines(
+            f"Training accuracy mean +/- std. dev. for {name.lower()}: "
+            f"{cv_results['test_score'].mean():.3f} +/- "
+            f"{cv_results['test_score'].std():.3f}"
+            f"\n"
+        )
+        scores = []
+        for cv_model in cv_results["estimator"]:
+            scores.append(accuracy_score(y_test,
+                                         cv_model.predict(X_test_pp)))
+        f.writelines(
+            f"Testing accuracy mean +/- std. dev. for {name.lower()}: "
+            f"{np.mean(scores):.3f} +/- {np.std(scores):.3f}"
+            f"\n\n"
+        )
+    f.writelines("\n")
 
-# t0 = time()
-# with open(work_dir / "stats_output.txt", "w") as f:
-#     # model accuracy
-#     y_pred_results = []
-#     y_pred_proba_results = []
-#     print("Calculating accuracy...")
-#     for name, model in model_dict.items():
-#         model.fit(X_new, y_new)
-#         y_pred = model.predict(X_test)
-#         y_pred_results.append(y_pred)
-#         y_pred_proba = model.predict_proba(X_test)
-#         y_pred_proba_results.append(y_pred_proba)
-#         f.writelines(
-#             f"Accuracy of the {name.lower()} on the test set: "
-#             f"{model.score(X_test, y_test):.4f}\n"
-#         )
-#     f.writelines("\n")
 
 #     # confusion matrix with plot
 #     print("Calculating confusion matrix values and plot...")
@@ -198,4 +179,4 @@ for name in model_dict.keys():
 #         )
 #         display_scores(name, -scores)
 
-# print(f"Time elapsed: {(time() - t0):.2f} seconds")
+print(f"Time elapsed: {(time() - t0):.2f} seconds")
