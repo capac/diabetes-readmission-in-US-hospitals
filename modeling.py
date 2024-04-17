@@ -18,7 +18,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
-    # confusion_matrix,
+    confusion_matrix,
     # classification_report,
     # roc_auc_score,
     # roc_curve,
@@ -93,7 +93,7 @@ model_dict = {
 
 t0 = time()
 with open(work_dir / "stats_output.txt", "w") as f:
-    print("Calculating model accuracy...")
+    cm_dict = {}
     for name, model in model_dict.items():
         pipeline = make_pipeline_imblearn(
             RandomOverSampler(sampling_strategy="minority", random_state=0),
@@ -116,20 +116,17 @@ with open(work_dir / "stats_output.txt", "w") as f:
         f.writelines(
             f"Testing accuracy mean +/- std. dev. for {name.lower()}: "
             f"{np.mean(scores):.3f} +/- {np.std(scores):.3f}"
-            f"\n\n"
+            f"\n"
         )
+        # confusion matrix with plot
+        cm = confusion_matrix(y_test, cv_model.predict(X_test_pp),
+                              normalize='pred')
+        f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
+        cm_dict[name] = cm
+        f.writelines("\n")
+    # conf_mx_heat_plot(cm_dict, work_dir)
     f.writelines("\n")
 
-
-#     # confusion matrix with plot
-#     print("Calculating confusion matrix values and plot...")
-#     cm_dict = {}
-#     for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
-#         cm = confusion_matrix(y_test, y_pred)
-#         f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
-#         cm_dict[name] = cm
-#         f.writelines("\n")
-#     conf_mx_heat_plot(cm_dict, work_dir)
 
 #     # classification report
 #     print("Calculating precision, recall, F-measure and support...")
