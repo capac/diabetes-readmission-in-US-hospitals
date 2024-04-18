@@ -4,17 +4,20 @@ from time import time
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from sklearn.compose import make_column_selector, make_column_transformer
+from sklearn.compose import (make_column_selector,
+                             make_column_transformer)
 from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 from imblearn.pipeline import make_pipeline
-from sklearn.model_selection import train_test_split, cross_validate
+from sklearn.model_selection import (train_test_split,
+                                     cross_validate,
+                                     cross_val_score)
 from imblearn.over_sampling import RandomOverSampler
 from helper_funcs.helper_plots import (conf_mx_heat_plot,
                                        roc_curve_plot_with_auc)
-# from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+# from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.metrics import (
     confusion_matrix,
     classification_report,
@@ -185,27 +188,24 @@ with open(work_dir / "stats_output.txt", "w") as f:
         f.writelines("\n")
     roc_curve_plot_with_auc(rates_dict, work_dir)
 
-#     # cross validation average Brier score
-#     def display_scores(model, scores):
-#         f.writelines(
-#             f"Cross-validation Brier score for "
-#             f"the {model.lower()} model:\n"
-#         )
-#         # f.writelines(f'Scores: {scores}')
-#         f.writelines(f"Average Brier score: {scores.mean():.4f}\n")
-#         f.writelines(f"Standard devation: {scores.std():.4f}\n")
-#         f.writelines("\n")
+    # cross validation average Brier score
+    def display_scores(model, scores):
+        f.writelines(
+            f"Cross-validation Brier score for "
+            f"the {model.lower()} model:\n"
+        )
+        # f.writelines(f'Scores: {scores}')
+        f.writelines(f"Average Brier score: {scores.mean():.4f}\n")
+        f.writelines(f"Standard devation: {scores.std():.4f}\n")
+        f.writelines("\n")
 
-#     print("Calculating average Brier score...")
-#     for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
-#         scores = cross_val_score(
-#             model,
-#             y_pred.reshape(-1, 1),
-#             y_test,
-#             scoring="neg_brier_score",
-#             cv=6,
-#             n_jobs=-1,
-#         )
-#         display_scores(name, -scores)
+    print("Calculating average Brier score...")
+    for name, model in model_dict.items():
+        scores = cross_val_score(
+            model, clf.predict(X_test_pp).reshape(-1, 1),
+            y_test, scoring="neg_brier_score",
+            cv=6, n_jobs=-1,
+        )
+        display_scores(name, -scores)
 
 print(f"Time elapsed: {(time() - t0):.2f} seconds")
