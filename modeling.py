@@ -128,9 +128,9 @@ with open(work_dir / "stats_output.txt", "w") as f:
             f"\n\n"
         )
     f.writelines("\n")
-    ros = RandomUnderSampler(sampling_strategy="majority",
+    rus = RandomUnderSampler(sampling_strategy="majority",
                              random_state=0)
-    X_train_resampled, y_train_resampled = ros.fit_resample(X_train_pp,
+    X_train_resampled, y_train_resampled = rus.fit_resample(X_train_pp,
                                                             y_train)
     clf = model.fit(X_train_resampled, y_train_resampled)
     print("Calculating confusion matrix...")
