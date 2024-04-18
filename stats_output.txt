@@ -1,81 +1,81 @@
-Training accuracy mean +/- std. dev. for logistic regression: 0.601 +/- 0.008
-Testing accuracy mean +/- std. dev. for logistic regression: 0.591 +/- 0.001
+Training accuracy mean +/- std. dev. for logistic regression: 0.594 +/- 0.007
+Testing accuracy mean +/- std. dev. for logistic regression: 0.587 +/- 0.004
 
-Training accuracy mean +/- std. dev. for decision tree classifier: 0.555 +/- 0.006
-Testing accuracy mean +/- std. dev. for decision tree classifier: 0.557 +/- 0.003
+Training accuracy mean +/- std. dev. for decision tree classifier: 0.543 +/- 0.007
+Testing accuracy mean +/- std. dev. for decision tree classifier: 0.549 +/- 0.007
 
-Training accuracy mean +/- std. dev. for random forest classifier: 0.558 +/- 0.006
-Testing accuracy mean +/- std. dev. for random forest classifier: 0.561 +/- 0.003
+Training accuracy mean +/- std. dev. for random forest classifier: 0.592 +/- 0.006
+Testing accuracy mean +/- std. dev. for random forest classifier: 0.593 +/- 0.002
 
 
 Confusion matrix on logistic regression model: 
-[[13452  1998]
- [ 1135   386]]
+[[9756 5694]
+ [ 642  879]]
 
 Confusion matrix on decision tree classifier model: 
-[[13452  1998]
- [ 1135   386]]
+[[9756 5694]
+ [ 642  879]]
 
 Confusion matrix on random forest classifier model: 
-[[13452  1998]
- [ 1135   386]]
+[[9756 5694]
+ [ 642  879]]
 
 
 Precision, recall, F-measure and support on the logistic regression model: 
               precision    recall  f1-score   support
 
-           0     0.9222    0.8707    0.8957     15450
-           1     0.1619    0.2538    0.1977      1521
+           0     0.9383    0.6315    0.7549     15450
+           1     0.1337    0.5779    0.2172      1521
 
-    accuracy                         0.8154     16971
-   macro avg     0.5421    0.5622    0.5467     16971
-weighted avg     0.8541    0.8154    0.8331     16971
+    accuracy                         0.6267     16971
+   macro avg     0.5360    0.6047    0.4860     16971
+weighted avg     0.8662    0.6267    0.7067     16971
 
 Precision, recall, F-measure and support on the decision tree classifier model: 
               precision    recall  f1-score   support
 
-           0     0.9222    0.8707    0.8957     15450
-           1     0.1619    0.2538    0.1977      1521
+           0     0.9383    0.6315    0.7549     15450
+           1     0.1337    0.5779    0.2172      1521
 
-    accuracy                         0.8154     16971
-   macro avg     0.5421    0.5622    0.5467     16971
-weighted avg     0.8541    0.8154    0.8331     16971
+    accuracy                         0.6267     16971
+   macro avg     0.5360    0.6047    0.4860     16971
+weighted avg     0.8662    0.6267    0.7067     16971
 
 Precision, recall, F-measure and support on the random forest classifier model: 
               precision    recall  f1-score   support
 
-           0     0.9222    0.8707    0.8957     15450
-           1     0.1619    0.2538    0.1977      1521
+           0     0.9383    0.6315    0.7549     15450
+           1     0.1337    0.5779    0.2172      1521
 
-    accuracy                         0.8154     16971
-   macro avg     0.5421    0.5622    0.5467     16971
-weighted avg     0.8541    0.8154    0.8331     16971
+    accuracy                         0.6267     16971
+   macro avg     0.5360    0.6047    0.4860     16971
+weighted avg     0.8662    0.6267    0.7067     16971
 
 
 Model: Logistic Regression
-FPR: 2743
-TPR: 2743
-Number of thresholds: 2743
+FPR: 2745
+TPR: 2745
+Number of thresholds: 2745
 
 Model: Decision Tree Classifier
-FPR: 2743
-TPR: 2743
-Number of thresholds: 2743
+FPR: 2745
+TPR: 2745
+Number of thresholds: 2745
 
 Model: Random Forest Classifier
-FPR: 2743
-TPR: 2743
-Number of thresholds: 2743
+FPR: 2745
+TPR: 2745
+Number of thresholds: 2745
 
 Cross-validation Brier score for the logistic regression model:
-Average Brier score: 0.0808
-Standard devation: 0.0005
+Average Brier score: 0.0804
+Standard devation: 0.0004
 
 Cross-validation Brier score for the decision tree classifier model:
-Average Brier score: 0.0808
-Standard devation: 0.0005
+Average Brier score: 0.0804
+Standard devation: 0.0004
 
 Cross-validation Brier score for the random forest classifier model:
-Average Brier score: 0.0808
-Standard devation: 0.0005
+Average Brier score: 0.0804
+Standard devation: 0.0004
 

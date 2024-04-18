@@ -11,7 +11,7 @@ from imblearn.pipeline import make_pipeline
 from sklearn.model_selection import (train_test_split,
                                      cross_validate,
                                      cross_val_score)
-from imblearn.over_sampling import RandomOverSampler
+from imblearn.under_sampling import RandomUnderSampler
 from helper_funcs.helper_plots import (conf_mx_heat_plot,
                                        roc_curve_plot_with_auc)
 from sklearn.linear_model import LogisticRegression
@@ -103,8 +103,8 @@ with open(work_dir / "stats_output.txt", "w") as f:
     print("Calculating balanced accuracy...")
     for name, model in model_dict.items():
         pipeline = make_pipeline(
-            RandomOverSampler(sampling_strategy="minority",
-                              random_state=0),
+            RandomUnderSampler(sampling_strategy="majority",
+                               random_state=0),
             model,
         )
         cv_results = cross_validate(pipeline, X_train_pp, y_train,
@@ -128,8 +128,8 @@ with open(work_dir / "stats_output.txt", "w") as f:
             f"\n\n"
         )
     f.writelines("\n")
-    ros = RandomOverSampler(sampling_strategy="minority",
-                            random_state=0)
+    ros = RandomUnderSampler(sampling_strategy="majority",
+                             random_state=0)
     X_train_resampled, y_train_resampled = ros.fit_resample(X_train_pp,
                                                             y_train)
     clf = model.fit(X_train_resampled, y_train_resampled)
