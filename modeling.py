@@ -9,19 +9,17 @@ from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
 from imblearn.pipeline import make_pipeline
 from sklearn.model_selection import train_test_split, cross_validate
 from imblearn.over_sampling import RandomOverSampler
-from helper_funcs.helper_plots import conf_mx_heat_plot
-
-#                                        roc_curve_plot_with_auc)
+from helper_funcs.helper_plots import (conf_mx_heat_plot,
+                                       roc_curve_plot_with_auc)
 # from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
     confusion_matrix,
-    # classification_report,
-    # roc_auc_score,
-    # roc_curve,
-    # f1_score,
+    classification_report,
+    roc_auc_score,
+    roc_curve,
     balanced_accuracy_score,
 )
 
@@ -117,6 +115,7 @@ model_dict = {
 t0 = time()
 with open(work_dir / "stats_output.txt", "w") as f:
     cm_dict = {}
+    print("Calculating balanced accuracy...")
     for name, model in model_dict.items():
         pipeline = make_pipeline(
             RandomOverSampler(sampling_strategy="minority",
@@ -144,13 +143,14 @@ with open(work_dir / "stats_output.txt", "w") as f:
             f"\n\n"
         )
     f.writelines("\n")
+    ros = RandomOverSampler(sampling_strategy="minority",
+                            random_state=0)
+    X_train_resampled, y_train_resampled = ros.fit_resample(X_train_pp,
+                                                            y_train)
+    clf = model.fit(X_train_resampled, y_train_resampled)
+    print("Calculating confusion matrix...")
     for name, model in model_dict.items():
         # confusion matrix with plot
-        ros = RandomOverSampler(sampling_strategy="minority",
-                                random_state=0)
-        X_train_resampled, y_train_resampled = ros.fit_resample(X_train_pp,
-                                                                y_train)
-        clf = model.fit(X_train_resampled, y_train_resampled)
         cm = confusion_matrix(y_test, clf.predict(X_test_pp),
                               labels=clf.classes_)
         f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
@@ -159,31 +159,31 @@ with open(work_dir / "stats_output.txt", "w") as f:
     conf_mx_heat_plot(cm_dict, work_dir)
     f.writelines("\n")
 
+    # classification report
+    print("Calculating precision, recall, F-measure and support...")
+    for name, model in model_dict.items():
+        class_report = classification_report(y_test,
+                                             clf.predict(X_test_pp),
+                                             digits=4)
+        f.writelines(
+            f"Precision, recall, F-measure and support on "
+            f"the {name.lower()} model: \n{class_report}\n"
+        )
+    f.writelines("\n")
 
-#     # classification report
-#     print("Calculating precision, recall, F-measure and support...")
-#     for (name, model), y_pred in zip(model_dict.items(), y_pred_results):
-#         class_report = classification_report(y_test, y_pred, digits=4)
-#         f.writelines(
-#             f"Precision, recall, F-measure and support on "
-#             f"the {name.lower()} model: \n{class_report}\n"
-#         )
-#     f.writelines("\n")
-
-#     # roc curve
-#     print("Calculating ROC plot...")
-#     rates_dict = {}
-#     for (name, model), y_pred, y_pred_proba in zip(
-#         model_dict.items(), y_pred_results, y_pred_proba_results
-#     ):
-#         model_roc_auc = roc_auc_score(y_test, y_pred)
-#         fpr, tpr, thresholds = roc_curve(y_test, y_pred_proba[:, 1])
-#         f.writelines(f"Model: {name.title()}\n"
-#                      f"FPR: {len(fpr)}\nTPR: {len(tpr)}\n")
-#         f.writelines(f"Number of thresholds: {len(thresholds)}\n")
-#         rates_dict[name] = [fpr, tpr, model_roc_auc]
-#         f.writelines("\n")
-#     roc_curve_plot_with_auc(rates_dict, work_dir)
+    # roc curve
+    print("Calculating ROC plot...")
+    rates_dict = {}
+    for name, model in model_dict.items():
+        model_roc_auc = roc_auc_score(y_test, clf.predict(X_test_pp))
+        fpr, tpr, thresholds = roc_curve(y_test,
+                                         clf.predict_proba(X_test_pp)[:, 1])
+        f.writelines(f"Model: {name.title()}\n"
+                     f"FPR: {len(fpr)}\nTPR: {len(tpr)}\n")
+        f.writelines(f"Number of thresholds: {len(thresholds)}\n")
+        rates_dict[name] = [fpr, tpr, model_roc_auc]
+        f.writelines("\n")
+    roc_curve_plot_with_auc(rates_dict, work_dir)
 
 #     # cross validation average Brier score
 #     def display_scores(model, scores):

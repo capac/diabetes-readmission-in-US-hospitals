@@ -9,15 +9,61 @@ Testing accuracy mean +/- std. dev. for random forest classifier: 0.561 +/- 0.00
 
 
 Confusion matrix on logistic regression model: 
-[[10713  4737]
- [  779   742]]
+[[13452  1998]
+ [ 1135   386]]
 
 Confusion matrix on decision tree classifier model: 
-[[10668  4782]
- [  860   661]]
+[[13452  1998]
+ [ 1135   386]]
 
 Confusion matrix on random forest classifier model: 
 [[13452  1998]
  [ 1135   386]]
 
+
+Precision, recall, F-measure and support on the logistic regression model: 
+              precision    recall  f1-score   support
+
+           0     0.9222    0.8707    0.8957     15450
+           1     0.1619    0.2538    0.1977      1521
+
+    accuracy                         0.8154     16971
+   macro avg     0.5421    0.5622    0.5467     16971
+weighted avg     0.8541    0.8154    0.8331     16971
+
+Precision, recall, F-measure and support on the decision tree classifier model: 
+              precision    recall  f1-score   support
+
+           0     0.9222    0.8707    0.8957     15450
+           1     0.1619    0.2538    0.1977      1521
+
+    accuracy                         0.8154     16971
+   macro avg     0.5421    0.5622    0.5467     16971
+weighted avg     0.8541    0.8154    0.8331     16971
+
+Precision, recall, F-measure and support on the random forest classifier model: 
+              precision    recall  f1-score   support
+
+           0     0.9222    0.8707    0.8957     15450
+           1     0.1619    0.2538    0.1977      1521
+
+    accuracy                         0.8154     16971
+   macro avg     0.5421    0.5622    0.5467     16971
+weighted avg     0.8541    0.8154    0.8331     16971
+
+
+Model: Logistic Regression
+FPR: 2743
+TPR: 2743
+Number of thresholds: 2743
+
+Model: Decision Tree Classifier
+FPR: 2743
+TPR: 2743
+Number of thresholds: 2743
+
+Model: Random Forest Classifier
+FPR: 2743
+TPR: 2743
+Number of thresholds: 2743
 
