@@ -4,16 +4,15 @@ from time import time
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from sklearn.compose import (make_column_selector,
-                             make_column_transformer)
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.pipeline import make_pipeline as make_pipeline_sklearn
-from imblearn.pipeline import make_pipeline as make_pipeline_imblearn
-from sklearn.model_selection import (train_test_split,
-                                     cross_validate)
+from sklearn.compose import make_column_selector, make_column_transformer
+from sklearn.preprocessing import MinMaxScaler, OneHotEncoder
+from imblearn.pipeline import make_pipeline
+from sklearn.model_selection import train_test_split, cross_validate
 from imblearn.over_sampling import RandomOverSampler
-# from helper_funcs.helper_plots import (conf_mx_heat_plot,
+from helper_funcs.helper_plots import conf_mx_heat_plot
+
 #                                        roc_curve_plot_with_auc)
+# from sklearn.ensemble import HistGradientBoostingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -22,7 +21,8 @@ from sklearn.metrics import (
     # classification_report,
     # roc_auc_score,
     # roc_curve,
-    accuracy_score,
+    # f1_score,
+    balanced_accuracy_score,
 )
 
 work_dir = (
@@ -30,11 +30,18 @@ work_dir = (
     "uci-ml-repository/diabetes-in-130-US-hospitals"
 )
 df = pd.read_csv(work_dir / "data/df_encoded.csv", low_memory=False)
-num_list = ['time_in_hospital', 'num_lab_procedures', 'num_procedures',
-            'num_medications', 'number_diagnoses', 'service_use', 'readmitted']
+num_list = [
+    "time_in_hospital",
+    "num_lab_procedures",
+    "num_procedures",
+    "num_medications",
+    "number_diagnoses",
+    "service_use",
+    "readmitted",
+]
 cat_list = list(set(df.columns) - set(num_list))
 
-df[cat_list] = df[cat_list].astype('object')
+df[cat_list] = df[cat_list].astype("object")
 
 # selecting input and label features
 X = df.drop("readmitted", axis=1)
@@ -47,27 +54,35 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,
 
 def preprocessing_data(X_train, X_test):
     # standardize numeric data and generate one-hot encoded data features
-    num_pipeline = make_pipeline_sklearn(StandardScaler())
-    cat_pipeline = make_pipeline_sklearn(
-        OneHotEncoder(handle_unknown='infrequent_if_exist')
-    )
+    num_pipeline = make_pipeline(MinMaxScaler())
+    cat_pipeline = make_pipeline(OneHotEncoder(
+        handle_unknown="infrequent_if_exist")
+        )
 
     # preprocessing pipeline
     preprocessing = make_column_transformer(
         (num_pipeline, make_column_selector(dtype_include=np.number)),
-        (cat_pipeline, make_column_selector(dtype_include='object'),),
+        (
+            cat_pipeline,
+            make_column_selector(dtype_include="object"),
+        ),
         sparse_threshold=0,
     )
 
     # output dataframe from preprocessing pipeline
     X_train_pp = preprocessing.fit_transform(X_train)
-    X_train_pp_columns = preprocessing.get_feature_names_out()
+    pp_columns = preprocessing.get_feature_names_out()
     X_test_pp = preprocessing.transform(X_test)
-    X_test_pp_columns = preprocessing.get_feature_names_out()
-    X_train_pp = pd.DataFrame(X_train_pp, columns=X_train_pp_columns,
-                              index=X_train.index,)
-    X_test_pp = pd.DataFrame(X_test_pp, columns=X_test_pp_columns,
-                             index=X_test.index,)
+    X_train_pp = pd.DataFrame(
+        X_train_pp,
+        columns=pp_columns,
+        index=X_train.index,
+    )
+    X_test_pp = pd.DataFrame(
+        X_test_pp,
+        columns=pp_columns,
+        index=X_test.index,
+    )
     return X_train_pp, X_test_pp
 
 
@@ -75,14 +90,22 @@ X_train_pp, X_test_pp = preprocessing_data(X_train, X_test)
 
 # testing several data science algorithms
 model_dict = {
-    "Logistic regression": LogisticRegression(n_jobs=-1, C=1e2,
-                                              solver="newton-cholesky",),
-    "Decision tree classifier": DecisionTreeClassifier(max_depth=16,
-                                                       random_state=42,),
-    "Random forest classifier": RandomForestClassifier(n_jobs=-1,
-                                                       random_state=42,
-                                                       max_depth=16,
-                                                       n_estimators=160,),
+    "Logistic regression": LogisticRegression(
+        n_jobs=-1,
+        C=1e2,
+        solver="newton-cholesky",
+    ),
+    "Decision tree classifier": DecisionTreeClassifier(
+        max_depth=16,
+        random_state=0,
+    ),
+    "Random forest classifier": RandomForestClassifier(
+        n_jobs=-1,
+        random_state=0,
+        max_depth=16,
+        n_estimators=160,
+    ),
+    # "Histogram GB classifier": HistGradientBoostingClassifier(random_state=0)
 }
 
 # SMOTE: Synthetic Minority Over-sampling Technique
@@ -95,14 +118,16 @@ t0 = time()
 with open(work_dir / "stats_output.txt", "w") as f:
     cm_dict = {}
     for name, model in model_dict.items():
-        pipeline = make_pipeline_imblearn(
-            RandomOverSampler(sampling_strategy="minority", random_state=0),
-            model)
-        cv_results = cross_validate(pipeline, X_train_pp,
-                                    y_train, scoring="accuracy",
+        pipeline = make_pipeline(
+            RandomOverSampler(sampling_strategy="minority",
+                              random_state=0),
+            model,
+        )
+        cv_results = cross_validate(pipeline, X_train_pp, y_train,
+                                    scoring="balanced_accuracy",
                                     return_train_score=True,
-                                    return_estimator=True,
-                                    n_jobs=-1, error_score='raise')
+                                    return_estimator=True, n_jobs=-1,
+                                    error_score="raise",)
         f.writelines(
             f"Training accuracy mean +/- std. dev. for {name.lower()}: "
             f"{cv_results['test_score'].mean():.3f} +/- "
@@ -111,20 +136,27 @@ with open(work_dir / "stats_output.txt", "w") as f:
         )
         scores = []
         for cv_model in cv_results["estimator"]:
-            scores.append(accuracy_score(y_test,
-                                         cv_model.predict(X_test_pp)))
+            scores.append(balanced_accuracy_score(y_test,
+                                                  cv_model.predict(X_test_pp)))
         f.writelines(
             f"Testing accuracy mean +/- std. dev. for {name.lower()}: "
             f"{np.mean(scores):.3f} +/- {np.std(scores):.3f}"
-            f"\n"
+            f"\n\n"
         )
+    f.writelines("\n")
+    for name, model in model_dict.items():
         # confusion matrix with plot
-        cm = confusion_matrix(y_test, cv_model.predict(X_test_pp),
-                              normalize='pred')
+        ros = RandomOverSampler(sampling_strategy="minority",
+                                random_state=0)
+        X_train_resampled, y_train_resampled = ros.fit_resample(X_train_pp,
+                                                                y_train)
+        clf = model.fit(X_train_resampled, y_train_resampled)
+        cm = confusion_matrix(y_test, clf.predict(X_test_pp),
+                              labels=clf.classes_)
         f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
         cm_dict[name] = cm
         f.writelines("\n")
-    # conf_mx_heat_plot(cm_dict, work_dir)
+    conf_mx_heat_plot(cm_dict, work_dir)
     f.writelines("\n")
 
 

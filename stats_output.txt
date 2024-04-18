@@ -1,19 +1,23 @@
-Training accuracy mean +/- std. dev. for logistic regression: 0.672 +/- 0.003
-Testing accuracy mean +/- std. dev. for logistic regression: 0.673 +/- 0.004
+Training accuracy mean +/- std. dev. for logistic regression: 0.601 +/- 0.008
+Testing accuracy mean +/- std. dev. for logistic regression: 0.591 +/- 0.001
+
+Training accuracy mean +/- std. dev. for decision tree classifier: 0.555 +/- 0.006
+Testing accuracy mean +/- std. dev. for decision tree classifier: 0.557 +/- 0.003
+
+Training accuracy mean +/- std. dev. for random forest classifier: 0.558 +/- 0.006
+Testing accuracy mean +/- std. dev. for random forest classifier: 0.561 +/- 0.003
+
+
 Confusion matrix on logistic regression model: 
-[[0.93222106 0.86436024]
- [0.06777894 0.13563976]]
+[[10713  4737]
+ [  779   742]]
 
-Training accuracy mean +/- std. dev. for decision tree classifier: 0.657 +/- 0.015
-Testing accuracy mean +/- std. dev. for decision tree classifier: 0.662 +/- 0.015
 Confusion matrix on decision tree classifier model: 
-[[0.92289759 0.8800645 ]
- [0.07710241 0.1199355 ]]
+[[10668  4782]
+ [  860   661]]
 
-Training accuracy mean +/- std. dev. for random forest classifier: 0.827 +/- 0.005
-Testing accuracy mean +/- std. dev. for random forest classifier: 0.826 +/- 0.003
 Confusion matrix on random forest classifier model: 
-[[0.92095476 0.83868011]
- [0.07904524 0.16131989]]
+[[13452  1998]
+ [ 1135   386]]
 
 
