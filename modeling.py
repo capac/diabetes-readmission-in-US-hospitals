@@ -57,33 +57,22 @@ def preprocessing_data(X_train, X_test):
     # standardize numeric data and generate one-hot encoded data features
     num_pipeline = make_pipeline(MinMaxScaler())
     cat_pipeline = make_pipeline(OneHotEncoder(
-        handle_unknown="infrequent_if_exist")
-        )
+        handle_unknown="infrequent_if_exist"),)
 
     # preprocessing pipeline
     preprocessing = make_column_transformer(
         (num_pipeline, make_column_selector(dtype_include=np.number)),
-        (
-            cat_pipeline,
-            make_column_selector(dtype_include="object"),
-        ),
-        sparse_threshold=0,
-    )
+        (cat_pipeline, make_column_selector(dtype_include="object"),),
+        sparse_threshold=0,)
 
     # output dataframe from preprocessing pipeline
     X_train_pp = preprocessing.fit_transform(X_train)
     pp_columns = preprocessing.get_feature_names_out()
     X_test_pp = preprocessing.transform(X_test)
-    X_train_pp = pd.DataFrame(
-        X_train_pp,
-        columns=pp_columns,
-        index=X_train.index,
-    )
-    X_test_pp = pd.DataFrame(
-        X_test_pp,
-        columns=pp_columns,
-        index=X_test.index,
-    )
+    X_train_pp = pd.DataFrame(X_train_pp, columns=pp_columns,
+                              index=X_train.index,)
+    X_test_pp = pd.DataFrame(X_test_pp, columns=pp_columns,
+                             index=X_test.index,)
     return X_train_pp, X_test_pp
 
 
@@ -91,21 +80,14 @@ X_train_pp, X_test_pp = preprocessing_data(X_train, X_test)
 
 # testing several data science algorithms
 model_dict = {
-    "Logistic regression": LogisticRegression(
-        n_jobs=-1,
-        C=1e2,
-        solver="newton-cholesky",
-    ),
-    "Decision tree classifier": DecisionTreeClassifier(
-        max_depth=16,
-        random_state=0,
-    ),
-    "Random forest classifier": RandomForestClassifier(
-        n_jobs=-1,
-        random_state=0,
-        max_depth=16,
-        n_estimators=160,
-    ),
+    "Logistic regression": LogisticRegression(n_jobs=-1, C=1e2,
+                                              solver="newton-cholesky",),
+    "Decision tree classifier": DecisionTreeClassifier(max_depth=16,
+                                                       random_state=0,),
+    "Random forest classifier": RandomForestClassifier(n_jobs=-1,
+                                                       random_state=0,
+                                                       max_depth=16,
+                                                       n_estimators=160,),
     # "Histogram GB classifier": HistGradientBoostingClassifier(random_state=0)
 }
 
@@ -154,8 +136,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
     print("Calculating confusion matrix...")
     for name, model in model_dict.items():
         # confusion matrix with plot
-        cm = confusion_matrix(y_test, clf.predict(X_test_pp),
-                              labels=clf.classes_)
+        cm = confusion_matrix(y_test, clf.predict(X_test_pp),)
         f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
         cm_dict[name] = cm
         f.writelines("\n")
