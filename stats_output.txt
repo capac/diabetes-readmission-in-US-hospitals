@@ -1,45 +1,66 @@
-Training accuracy mean +/- std. dev. for logistic regression: 0.594 +/- 0.007
-Testing accuracy mean +/- std. dev. for logistic regression: 0.587 +/- 0.004
+Training accuracy mean +/- std. dev. for logistic regression: 0.599 +/- 0.005
+Testing accuracy mean +/- std. dev. for logistic regression: 0.593 +/- 0.004
 
-Training accuracy mean +/- std. dev. for decision tree classifier: 0.543 +/- 0.007
+Training accuracy mean +/- std. dev. for decision tree classifier: 0.538 +/- 0.016
 Testing accuracy mean +/- std. dev. for decision tree classifier: 0.549 +/- 0.007
 
-Training accuracy mean +/- std. dev. for random forest classifier: 0.592 +/- 0.006
-Testing accuracy mean +/- std. dev. for random forest classifier: 0.593 +/- 0.002
+Training accuracy mean +/- std. dev. for random forest classifier: 0.588 +/- 0.011
+Testing accuracy mean +/- std. dev. for random forest classifier: 0.597 +/- 0.003
+
+Training accuracy mean +/- std. dev. for gbclassifier: 0.589 +/- 0.006
+Testing accuracy mean +/- std. dev. for gbclassifier: 0.598 +/- 0.006
+
+Training accuracy mean +/- std. dev. for histogramgbclassifier: 0.578 +/- 0.009
+Testing accuracy mean +/- std. dev. for histogramgbclassifier: 0.585 +/- 0.006
+
+Training accuracy mean +/- std. dev. for xgbclassifier:: 0.579 +/- 0.012
+Testing accuracy mean +/- std. dev. for xgbclassifier:: 0.572 +/- 0.006
 
 
 Confusion matrix on logistic regression model: 
-[[9756 5694]
- [ 642  879]]
+[[10405  5045]
+ [  736   785]]
 
 Confusion matrix on decision tree classifier model: 
-[[9756 5694]
- [ 642  879]]
+[[8763 6687]
+ [ 690  831]]
 
 Confusion matrix on random forest classifier model: 
 [[9756 5694]
  [ 642  879]]
 
+Confusion matrix on gbclassifier model: 
+[[9893 5557]
+ [ 673  848]]
+
+Confusion matrix on histogramgbclassifier model: 
+[[9616 5834]
+ [ 678  843]]
+
+Confusion matrix on xgbclassifier: model: 
+[[9269 6181]
+ [ 680  841]]
+
 
 Precision, recall, F-measure and support on the logistic regression model: 
               precision    recall  f1-score   support
 
-           0     0.9383    0.6315    0.7549     15450
-           1     0.1337    0.5779    0.2172      1521
+           0     0.9339    0.6735    0.7826     15450
+           1     0.1346    0.5161    0.2136      1521
 
-    accuracy                         0.6267     16971
-   macro avg     0.5360    0.6047    0.4860     16971
-weighted avg     0.8662    0.6267    0.7067     16971
+    accuracy                         0.6594     16971
+   macro avg     0.5343    0.5948    0.4981     16971
+weighted avg     0.8623    0.6594    0.7316     16971
 
 Precision, recall, F-measure and support on the decision tree classifier model: 
               precision    recall  f1-score   support
 
-           0     0.9383    0.6315    0.7549     15450
-           1     0.1337    0.5779    0.2172      1521
+           0     0.9270    0.5672    0.7038     15450
+           1     0.1105    0.5464    0.1839      1521
 
-    accuracy                         0.6267     16971
-   macro avg     0.5360    0.6047    0.4860     16971
-weighted avg     0.8662    0.6267    0.7067     16971
+    accuracy                         0.5653     16971
+   macro avg     0.5188    0.5568    0.4438     16971
+weighted avg     0.8538    0.5653    0.6572     16971
 
 Precision, recall, F-measure and support on the random forest classifier model: 
               precision    recall  f1-score   support
@@ -51,31 +72,88 @@ Precision, recall, F-measure and support on the random forest classifier model:
    macro avg     0.5360    0.6047    0.4860     16971
 weighted avg     0.8662    0.6267    0.7067     16971
 
+Precision, recall, F-measure and support on the gbclassifier model: 
+              precision    recall  f1-score   support
+
+           0     0.9363    0.6403    0.7605     15450
+           1     0.1324    0.5575    0.2140      1521
+
+    accuracy                         0.6329     16971
+   macro avg     0.5344    0.5989    0.4873     16971
+weighted avg     0.8643    0.6329    0.7115     16971
+
+Precision, recall, F-measure and support on the histogramgbclassifier model: 
+              precision    recall  f1-score   support
+
+           0     0.9341    0.6224    0.7470     15450
+           1     0.1263    0.5542    0.2057      1521
+
+    accuracy                         0.6163     16971
+   macro avg     0.5302    0.5883    0.4764     16971
+weighted avg     0.8617    0.6163    0.6985     16971
+
+Precision, recall, F-measure and support on the xgbclassifier: model: 
+              precision    recall  f1-score   support
+
+           0     0.9317    0.5999    0.7299     15450
+           1     0.1198    0.5529    0.1969      1521
+
+    accuracy                         0.5957     16971
+   macro avg     0.5257    0.5764    0.4634     16971
+weighted avg     0.8589    0.5957    0.6821     16971
+
 
 Model: Logistic Regression
-FPR: 2745
-TPR: 2745
-Number of thresholds: 2745
+FPR: 2723
+TPR: 2723
+Number of thresholds: 2723
 
 Model: Decision Tree Classifier
-FPR: 2745
-TPR: 2745
-Number of thresholds: 2745
+FPR: 71
+TPR: 71
+Number of thresholds: 71
 
 Model: Random Forest Classifier
 FPR: 2745
 TPR: 2745
 Number of thresholds: 2745
 
+Model: Gbclassifier
+FPR: 4202
+TPR: 4202
+Number of thresholds: 4202
+
+Model: Histogramgbclassifier
+FPR: 2773
+TPR: 2773
+Number of thresholds: 2773
+
+Model: Xgbclassifier:
+FPR: 2766
+TPR: 2766
+Number of thresholds: 2766
+
 Cross-validation Brier score for the logistic regression model:
-Average Brier score: 0.0804
+Average Brier score: 0.0805
 Standard devation: 0.0004
 
 Cross-validation Brier score for the decision tree classifier model:
-Average Brier score: 0.0804
-Standard devation: 0.0004
+Average Brier score: 0.0813
+Standard devation: 0.0003
 
 Cross-validation Brier score for the random forest classifier model:
 Average Brier score: 0.0804
 Standard devation: 0.0004
+
+Cross-validation Brier score for the gbclassifier model:
+Average Brier score: 0.0805
+Standard devation: 0.0003
+
+Cross-validation Brier score for the histogramgbclassifier model:
+Average Brier score: 0.0807
+Standard devation: 0.0004
+
+Cross-validation Brier score for the xgbclassifier: model:
+Average Brier score: 0.0810
+Standard devation: 0.0002
 

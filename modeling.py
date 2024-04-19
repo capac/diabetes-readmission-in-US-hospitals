@@ -17,7 +17,9 @@ from helper_funcs.helper_plots import (conf_mx_heat_plot,
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-# from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier
+from xgboost import XGBClassifier
 from sklearn.metrics import (
     confusion_matrix,
     classification_report,
@@ -88,7 +90,9 @@ model_dict = {
                                                        random_state=0,
                                                        max_depth=16,
                                                        n_estimators=160,),
-    # "Histogram GB classifier": HistGradientBoostingClassifier(random_state=0)
+    "GBClassifier": GradientBoostingClassifier(random_state=0),
+    "HistogramGBClassifier": HistGradientBoostingClassifier(random_state=0),
+    "XGBClassifier:": XGBClassifier(random_state=0),
 }
 
 # SMOTE: Synthetic Minority Over-sampling Technique
@@ -99,15 +103,15 @@ model_dict = {
 
 t0 = time()
 with open(work_dir / "stats_output.txt", "w") as f:
+    rus = RandomUnderSampler(sampling_strategy="majority",
+                             random_state=0)
+    X_train_resampled, y_train_resampled = rus.fit_resample(X_train_pp,
+                                                            y_train)
     cm_dict = {}
     print("Calculating balanced accuracy...")
     for name, model in model_dict.items():
-        pipeline = make_pipeline(
-            RandomUnderSampler(sampling_strategy="majority",
-                               random_state=0),
-            model,
-        )
-        cv_results = cross_validate(pipeline, X_train_pp, y_train,
+        cv_results = cross_validate(model, X_train_resampled,
+                                    y_train_resampled,
                                     scoring="balanced_accuracy",
                                     return_train_score=True,
                                     return_estimator=True, n_jobs=-1,
@@ -128,24 +132,22 @@ with open(work_dir / "stats_output.txt", "w") as f:
             f"\n\n"
         )
     f.writelines("\n")
-    rus = RandomUnderSampler(sampling_strategy="majority",
-                             random_state=0)
-    X_train_resampled, y_train_resampled = rus.fit_resample(X_train_pp,
-                                                            y_train)
-    clf = model.fit(X_train_resampled, y_train_resampled)
     print("Calculating confusion matrix...")
     for name, model in model_dict.items():
         # confusion matrix with plot
+        clf = model.fit(X_train_resampled, y_train_resampled)
         cm = confusion_matrix(y_test, clf.predict(X_test_pp),)
         f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
         cm_dict[name] = cm
         f.writelines("\n")
+        del clf
     conf_mx_heat_plot(cm_dict, work_dir)
     f.writelines("\n")
 
     # classification report
     print("Calculating precision, recall, F-measure and support...")
     for name, model in model_dict.items():
+        clf = model.fit(X_train_resampled, y_train_resampled)
         class_report = classification_report(y_test,
                                              clf.predict(X_test_pp),
                                              digits=4)
@@ -153,12 +155,14 @@ with open(work_dir / "stats_output.txt", "w") as f:
             f"Precision, recall, F-measure and support on "
             f"the {name.lower()} model: \n{class_report}\n"
         )
+        del clf
     f.writelines("\n")
 
     # roc curve
     print("Calculating ROC plot...")
     rates_dict = {}
     for name, model in model_dict.items():
+        clf = model.fit(X_train_resampled, y_train_resampled)
         model_roc_auc = roc_auc_score(y_test, clf.predict(X_test_pp))
         fpr, tpr, thresholds = roc_curve(y_test,
                                          clf.predict_proba(X_test_pp)[:, 1])
@@ -167,6 +171,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
         f.writelines(f"Number of thresholds: {len(thresholds)}\n")
         rates_dict[name] = [fpr, tpr, model_roc_auc]
         f.writelines("\n")
+        del clf
     roc_curve_plot_with_auc(rates_dict, work_dir)
 
     # cross validation average Brier score
@@ -182,11 +187,13 @@ with open(work_dir / "stats_output.txt", "w") as f:
 
     print("Calculating average Brier score...")
     for name, model in model_dict.items():
+        clf = model.fit(X_train_resampled, y_train_resampled)
         scores = cross_val_score(
             model, clf.predict(X_test_pp).reshape(-1, 1),
             y_test, scoring="neg_brier_score",
             cv=6, n_jobs=-1,
         )
+        del clf
         display_scores(name, -scores)
 
 print(f"Time elapsed: {(time() - t0):.2f} seconds")
