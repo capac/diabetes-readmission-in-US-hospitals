@@ -3,11 +3,15 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+row_length_in_px = 12
+column_length_in_px = 8
+
 
 def roc_curve_plot_with_auc(rates_dict, work_dir):
-    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
+    fig, axes = plt.subplots(2, 3, figsize=(row_length_in_px,
+                                            column_length_in_px))
     rates_tuples = rates_dict.items()
-    for ax, (name, rates_list) in zip(axes, rates_tuples):
+    for ax, (name, rates_list) in zip(axes.flatten(), rates_tuples):
         fpr, tpr, model_roc_auc = rates_list
         ax.plot(fpr, tpr, 'b.-', label='AUC: {:.4f}'.format(model_roc_auc))
         ax.plot([0, 1], [0, 1], 'r--')
@@ -25,9 +29,10 @@ def roc_curve_plot_with_auc(rates_dict, work_dir):
 
 
 def conf_mx_heat_plot(cm_dict, work_dir):
-    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
+    fig, axes = plt.subplots(2, 3, figsize=(row_length_in_px,
+                                            column_length_in_px))
     cm_tuples = cm_dict.items()
-    for ax, (model_name, conf_mx) in zip(axes, cm_tuples):
+    for ax, (model_name, conf_mx) in zip(axes.flatten(), cm_tuples):
         row_sums = conf_mx.sum(axis=1, keepdims=True)
         norm_conf_mx = conf_mx/row_sums
         sns.heatmap(norm_conf_mx, cmap=plt.cm.coolwarm, ax=ax, square=True,
