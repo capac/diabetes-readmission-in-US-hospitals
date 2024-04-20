@@ -67,15 +67,15 @@ FPR: 2688
 TPR: 2688
 Number of thresholds: 2688
 
-Cross-validation Brier score for the logistic regression model:
+Cross-validated average Brier score for the logistic regression model:
 Average Brier score: 0.0805
 Standard devation: 0.0004
 
-Cross-validation Brier score for the decision tree classifier model:
+Cross-validated average Brier score for the decision tree classifier model:
 Average Brier score: 0.0812
 Standard devation: 0.0003
 
-Cross-validation Brier score for the random forest classifier model:
+Cross-validated average Brier score for the random forest classifier model:
 Average Brier score: 0.0803
 Standard devation: 0.0004
 

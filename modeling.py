@@ -86,12 +86,8 @@ model_dict = {
                                                        n_estimators=160,),
 }
 
-# SMOTE: Synthetic Minority Over-sampling Technique
-# When dealing with mixed data type such as continuous and categorical
-# features, none of the presented methods (apart of the class
-# RandomOverSampler) can deal with the categorical features.
-# https://imbalanced-learn.org/stable/over_sampling.html#smote-variants
-
+# calculating balanced accuracy, confusion matrix, classification report
+# roc curve and auc values, and average Brier score
 t0 = time()
 with open(work_dir / "stats_output.txt", "w") as f:
     rus = RandomUnderSampler(sampling_strategy="majority",
@@ -168,7 +164,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
     # cross validation average Brier score
     def display_scores(model, scores):
         f.writelines(
-            f"Cross-validation Brier score for "
+            f"Cross-validated average Brier score for "
             f"the {model.lower()} model:\n"
         )
         # f.writelines(f'Scores: {scores}')
@@ -176,7 +172,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
         f.writelines(f"Standard devation: {scores.std():.4f}\n")
         f.writelines("\n")
 
-    print("Calculating average Brier score...")
+    print("Calculating cross-validated average Brier score...")
     for name, model in model_dict.items():
         clf = model.fit(X_train_resampled, y_train_resampled)
         scores = cross_val_score(
