@@ -1,0 +1,16 @@
+{
+    "params_lr": {
+        "C": 0.1,
+        "random_state": 42
+    },
+    "params_dt": {
+        "max_depth": 8,
+        "min_samples_split": 50,
+        "random_state": 42
+    },
+    "params_rf": {
+        "max_depth": 4,
+        "n_estimators": 100,
+        "random_state": 42
+    }
+}
