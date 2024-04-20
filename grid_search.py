@@ -3,14 +3,13 @@
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import json
 from imblearn.under_sampling import RandomUnderSampler
-from sklearn.compose import (make_column_selector,
-                             make_column_transformer)
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.pipeline import make_pipeline
-
+from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split, GridSearchCV
+
 
 work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
                          'uci-ml-repository/diabetes-in-130-US-hospitals'
@@ -31,22 +30,49 @@ y = df['readmitted'].copy()
 rus = RandomUnderSampler(sampling_strategy="majority", random_state=0)
 X_train_resampled, y_train_resampled = rus.fit_resample(X, y)
 
+# logistic regression parameters
+lr_param_grid = {'C': np.logspace(-2, 2, 5),
+                 'random_state': [42]}
+lr_clf = LogisticRegression(max_iter=4000)
 
-param_grid = {'max_depth': np.arange(4, 20, 4),
-              'n_estimators': np.arange(10, 200, 50),
-              'random_state': [42]}
+# decision tree parameters
+dt_param_grid = {'max_depth': np.arange(4, 25, 4),
+                 'min_samples_split': [5, 10, 20, 50,],
+                 'random_state': [42]}
+dt_clf = DecisionTreeClassifier()
 
+# random forest parameters
+rf_param_grid = {'n_estimators': [50, 100, 200],
+                 'max_depth': np.arange(4, 25, 4),
+                 'random_state': [42]}
 rf_clf = RandomForestClassifier()
 
-rf_grid_search = GridSearchCV(rf_clf, param_grid, cv=5,
-                              return_train_score=True,
-                              verbose=1, n_jobs=-1,
-                              scoring='f1')
+param_grid_dict = {'lr': lr_param_grid,
+                   'dt': dt_param_grid,
+                   'rf': rf_param_grid}
+clf_list = [lr_clf, dt_clf, rf_clf]
 
-rf_grid_search.fit(X_train_resampled, y_train_resampled)
-print(f'Best parameters: {rf_grid_search.best_params_}\n')
-print(f'Best estimator: {rf_grid_search.best_estimator_}\n')
 
-cvres_df = pd.DataFrame(rf_grid_search.cv_results_)
-cvres_df.sort_values(by='mean_test_score', ascending=False, inplace=True)
-print(cvres_df[['mean_test_score', 'params']])
+def calculate_best_parameters(clf, param_grid):
+    grid_search = GridSearchCV(clf, param_grid, cv=5,
+                               return_train_score=True,
+                               verbose=1, n_jobs=-1,
+                               scoring='f1')
+    # using entire dataset for grid search
+    grid_search.fit(X_train_resampled, y_train_resampled)
+    print(f'Best parameters for {clf.__class__.__name__}: '
+          f'{grid_search.best_params_}')
+    print(f'Best estimator: {grid_search.best_estimator_}\n')
+
+    return grid_search.best_params_
+
+
+with open('params.json', 'w') as f:
+    parameters_dict = {}
+    for clf, (name, param) in zip(clf_list, param_grid_dict.items()):
+        best_params = calculate_best_parameters(clf, param)
+        for key, val in best_params.items():
+            if isinstance(val, np.int64):
+                best_params[key] = int(val)
+        parameters_dict[f'params_{name}'] = best_params
+    json.dump(parameters_dict, f, indent=4,)
