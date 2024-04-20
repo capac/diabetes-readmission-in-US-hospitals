@@ -4,6 +4,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from time import time
+import json
 from sklearn.model_selection import learning_curve
 from sklearn.compose import (make_column_selector,
                              make_column_transformer)
@@ -32,7 +33,7 @@ df[cat_list] = df[cat_list].astype("object")
 
 X = df.drop('readmitted', axis=1)
 y = df['readmitted'].copy()
-tr_arr = np.linspace(.1, 1.0, 5)
+tr_arr = np.linspace(0.1, 1.0, 5)
 t0 = time()
 
 
@@ -55,7 +56,7 @@ def preprocessing_data(X):
 
 
 X_pp = preprocessing_data(X)
-rus = RandomUnderSampler(sampling_strategy="majority", random_state=0)
+rus = RandomUnderSampler(sampling_strategy=0.4, random_state=0)
 X_resampled, y_resampled = rus.fit_resample(X_pp, y)
 
 
@@ -76,15 +77,28 @@ def learning_curves_data(estimator, X, y, cv=5, train_sizes=tr_arr):
             val_scores_mean, val_scores_std)
 
 
+# Load nested parameters from JSON file
+with open('params.json', 'r') as f:
+    model_params = json.load(f)
+
 model_dict = {
-    'Logistic regression': LogisticRegression(n_jobs=-1, C=1e2,
-                                              solver='newton-cholesky'),
-    'Decision tree classifier': DecisionTreeClassifier(max_depth=16,
-                                                       random_state=42),
-    'Random forest classifier': RandomForestClassifier(n_jobs=-1,
-                                                       random_state=42,
-                                                       max_depth=16,
-                                                       n_estimators=160)}
+    'Logistic regression': LogisticRegression(
+        n_jobs=-1,
+        C=model_params['params_lr']['C'],
+        solver='newton-cholesky'
+        ),
+    'Decision tree classifier': DecisionTreeClassifier(
+        max_depth=model_params['params_dt']['max_depth'],
+        min_samples_split=model_params['params_dt']['min_samples_split'],
+        random_state=model_params['params_dt']['random_state'],
+        ),
+    'Random forest classifier': RandomForestClassifier(
+        n_jobs=-1,
+        n_estimators=model_params['params_rf']['n_estimators'],
+        max_depth=model_params['params_rf']['max_depth'],
+        random_state=model_params['params_rf']['random_state'],
+        )
+        }
 
 fig, axes = plt.subplots(1, 3, figsize=(14, 4))
 for ax, (model_name, model_instance) in zip(axes, model_dict.items()):
