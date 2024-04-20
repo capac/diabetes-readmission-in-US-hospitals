@@ -57,7 +57,7 @@ def calculate_best_parameters(clf, param_grid):
     grid_search = GridSearchCV(clf, param_grid, cv=5,
                                return_train_score=True,
                                verbose=1, n_jobs=-1,
-                               scoring='f1')
+                               scoring='balanced_accuracy')
     # using entire dataset for grid search
     grid_search.fit(X_train_resampled, y_train_resampled)
     print(f'Best parameters for {clf.__class__.__name__}: '
