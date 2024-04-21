@@ -4,6 +4,7 @@ from time import time
 from pathlib import Path
 import pandas as pd
 import numpy as np
+import json
 from sklearn.compose import (make_column_selector,
                              make_column_transformer)
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -73,18 +74,29 @@ def preprocessing_data(X_train, X_test):
 
 X_train_pp, X_test_pp = preprocessing_data(X_train, X_test)
 
+# load nested parameters from JSON file
+with open('params.json', 'r') as f:
+    model_params = json.load(f)
+
 # testing several data science algorithms
 model_dict = {
-    "Logistic regression": LogisticRegression(n_jobs=-1, C=1e2,
-                                              solver="newton-cholesky",
-                                              random_state=0,),
-    "Decision tree classifier": DecisionTreeClassifier(max_depth=16,
-                                                       random_state=0,),
-    "Random forest classifier": RandomForestClassifier(n_jobs=-1,
-                                                       random_state=0,
-                                                       max_depth=16,
-                                                       n_estimators=160,),
-}
+    'Logistic regression': LogisticRegression(
+        n_jobs=-1,
+        C=model_params['params_lr']['C'],
+        solver='newton-cholesky'
+        ),
+    'Decision tree classifier': DecisionTreeClassifier(
+        max_depth=model_params['params_dt']['max_depth'],
+        min_samples_split=model_params['params_dt']['min_samples_split'],
+        random_state=model_params['params_dt']['random_state'],
+        ),
+    'Random forest classifier': RandomForestClassifier(
+        n_jobs=-1,
+        n_estimators=model_params['params_rf']['n_estimators'],
+        max_depth=model_params['params_rf']['max_depth'],
+        random_state=model_params['params_rf']['random_state'],
+        )
+    }
 
 # calculating balanced accuracy, confusion matrix, classification report
 # roc curve and auc values, and average Brier score
