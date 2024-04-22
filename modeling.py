@@ -162,7 +162,8 @@ with open(work_dir / "stats_output.txt", "w") as f:
     rates_dict = {}
     for name, model in model_dict.items():
         clf = model.fit(X_train_resampled, y_train_resampled)
-        model_roc_auc = roc_auc_score(y_test, clf.predict(X_test_pp))
+        model_roc_auc = roc_auc_score(y_test,
+                                      clf.predict_proba(X_test_pp)[:, 1])
         fpr, tpr, thresholds = roc_curve(y_test,
                                          clf.predict_proba(X_test_pp)[:, 1])
         f.writelines(f"Model: {name.title()}\n"
@@ -177,11 +178,11 @@ with open(work_dir / "stats_output.txt", "w") as f:
     def display_scores(model, scores):
         f.writelines(
             f"Cross-validated average Brier score for "
-            f"the {model.lower()} model:\n"
+            f"{model.lower()}: "
         )
         # f.writelines(f'Scores: {scores}')
-        f.writelines(f"Average Brier score: {scores.mean():.4f}\n")
-        f.writelines(f"Standard devation: {scores.std():.4f}\n")
+        f.writelines(f"{np.round(scores.mean(), 4)} ± ")
+        f.writelines(f"{np.round(scores.std(), 4)}")
         f.writelines("\n")
 
     print("Calculating cross-validated average Brier score...")
