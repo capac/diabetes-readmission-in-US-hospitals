@@ -56,7 +56,7 @@ def preprocessing_data(X):
 
 
 X_pp = preprocessing_data(X)
-rus = RandomUnderSampler(sampling_strategy=0.4, random_state=0)
+rus = RandomUnderSampler(sampling_strategy='majority', random_state=0)
 X_resampled, y_resampled = rus.fit_resample(X_pp, y)
 
 
