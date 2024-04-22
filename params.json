@@ -10,7 +10,7 @@
     },
     "params_rf": {
         "max_depth": 4,
-        "n_estimators": 200,
+        "n_estimators": 500,
         "random_state": 42
     }
 }

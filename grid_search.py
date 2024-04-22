@@ -31,7 +31,7 @@ rus = RandomUnderSampler(sampling_strategy="majority", random_state=0)
 X_train_resampled, y_train_resampled = rus.fit_resample(X, y)
 
 # logistic regression parameters
-lr_param_grid = {'C': np.logspace(-2, 2, 5),
+lr_param_grid = {'C': np.logspace(-3, 1, 5),
                  'random_state': [42]}
 lr_clf = LogisticRegression(max_iter=4000)
 
@@ -42,7 +42,7 @@ dt_param_grid = {'max_depth': np.arange(4, 25, 4),
 dt_clf = DecisionTreeClassifier()
 
 # random forest parameters
-rf_param_grid = {'n_estimators': [50, 100, 200],
+rf_param_grid = {'n_estimators': [200, 500, 1000],
                  'max_depth': np.arange(4, 25, 4),
                  'random_state': [42]}
 rf_clf = RandomForestClassifier()
