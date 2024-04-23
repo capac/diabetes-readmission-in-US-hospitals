@@ -56,19 +56,16 @@ def preprocessing_data(X):
 
 
 X_pp = preprocessing_data(X)
-rus = RandomUnderSampler(sampling_strategy=0.4, random_state=0)
+rus = RandomUnderSampler(sampling_strategy='majority',
+                         random_state=0)
 X_resampled, y_resampled = rus.fit_resample(X_pp, y)
 
 
 def learning_curves_data(estimator, X, y, cv=5, train_sizes=tr_arr):
-    train_sizes, train_scores, val_scores = learning_curve(estimator,
-                                                           X_resampled,
-                                                           y_resampled,
-                                                           cv=cv, n_jobs=-1,
-                                                           train_sizes=tr_arr,
-                                                           scoring='accuracy',
-                                                           shuffle=True,
-                                                           random_state=42,)
+    train_sizes, train_scores, val_scores = learning_curve(
+        estimator, X_resampled, y_resampled,
+        cv=cv, n_jobs=-1, train_sizes=tr_arr,
+        scoring='accuracy', shuffle=True, random_state=42,)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     val_scores_mean = np.mean(val_scores, axis=1)
@@ -83,7 +80,7 @@ with open('params.json', 'r') as f:
 
 model_dict = {
     'Logistic regression': LogisticRegression(
-        n_jobs=-1,
+        n_jobs=-1, max_iter=4000,
         C=model_params['params_lr']['C'],
         solver='newton-cholesky'
         ),
@@ -98,7 +95,7 @@ model_dict = {
         max_depth=model_params['params_rf']['max_depth'],
         random_state=model_params['params_rf']['random_state'],
         )
-        }
+    }
 
 fig, axes = plt.subplots(1, 3, figsize=(14, 4))
 for ax, (model_name, model_instance) in zip(axes, model_dict.items()):
