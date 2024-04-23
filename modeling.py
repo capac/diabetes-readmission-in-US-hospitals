@@ -79,30 +79,44 @@ with open('params.json', 'r') as f:
     model_params = json.load(f)
 
 # testing several data science algorithms
-model_dict = {
-    'Logistic regression': LogisticRegression(
-        n_jobs=-1,
-        C=model_params['params_lr']['C'],
-        solver='newton-cholesky'
-        ),
-    'Decision tree classifier': DecisionTreeClassifier(
-        max_depth=model_params['params_dt']['max_depth'],
-        min_samples_split=model_params['params_dt']['min_samples_split'],
-        random_state=model_params['params_dt']['random_state'],
-        ),
-    'Random forest classifier': RandomForestClassifier(
-        n_jobs=-1,
-        n_estimators=model_params['params_rf']['n_estimators'],
-        max_depth=model_params['params_rf']['max_depth'],
-        random_state=model_params['params_rf']['random_state'],
-        )
-    }
-
+use_hyperparameters = False
+if use_hyperparameters:
+    model_dict = {
+        'Logistic regression': LogisticRegression(
+            n_jobs=-1, max_iter=4000,
+            C=model_params['params_lr']['C'],
+            solver='newton-cholesky'
+            ),
+        'Decision tree classifier': DecisionTreeClassifier(
+            max_depth=model_params['params_dt']['max_depth'],
+            min_samples_split=model_params['params_dt']['min_samples_split'],
+            random_state=model_params['params_dt']['random_state'],
+            ),
+        'Random forest classifier': RandomForestClassifier(
+            n_jobs=-1,
+            n_estimators=model_params['params_rf']['n_estimators'],
+            max_depth=model_params['params_rf']['max_depth'],
+            random_state=model_params['params_rf']['random_state'],
+            )
+        }
+else:
+    model_dict = {
+        'Logistic regression': LogisticRegression(n_jobs=-1,
+                                                  max_iter=4000),
+        'Decision tree classifier': DecisionTreeClassifier(
+            random_state=model_params['params_dt']['random_state'],
+            ),
+        'Random forest classifier': RandomForestClassifier(
+            random_state=model_params['params_rf']['random_state'],
+            )
+        }
 # calculating balanced accuracy, confusion matrix, classification report
-# roc curve and auc values, and average Brier score
+# roc curve and auc values, and average Brier score using custom threshold
+pp_threshold = 0.48
+print(f'Threshold: {pp_threshold}')
 t0 = time()
 with open(work_dir / "stats_output.txt", "w") as f:
-    rus = RandomUnderSampler(sampling_strategy="majority",
+    rus = RandomUnderSampler(sampling_strategy='majority',
                              random_state=0)
     X_train_resampled, y_train_resampled = rus.fit_resample(X_train_pp,
                                                             y_train)
@@ -116,18 +130,20 @@ with open(work_dir / "stats_output.txt", "w") as f:
                                     return_estimator=True, n_jobs=-1,
                                     error_score="raise",)
         f.writelines(
-            f"Training accuracy mean +/- std. dev. for {name.lower()}: "
-            f"{cv_results['test_score'].mean():.3f} +/- "
-            f"{cv_results['test_score'].std():.3f}"
+            f"Training accuracy mean ± std. dev. for {name.lower()}: "
+            f"{np.round(cv_results['test_score'].mean(), 4)} ± "
+            f"{np.round(cv_results['test_score'].std(), 4)}"
             f"\n"
         )
         scores = []
         for cv_model in cv_results["estimator"]:
-            scores.append(balanced_accuracy_score(y_test,
-                                                  cv_model.predict(X_test_pp)))
+            y_test_pp = (cv_model.predict_proba(X_test_pp)[:, 1] <=
+                         pp_threshold).astype('int')
+            scores.append(balanced_accuracy_score(y_test, y_test_pp))
         f.writelines(
-            f"Testing accuracy mean +/- std. dev. for {name.lower()}: "
-            f"{np.mean(scores):.3f} +/- {np.std(scores):.3f}"
+            f"Testing accuracy mean ± std. dev. for {name.lower()}: "
+            f"{np.round(np.mean(scores), 4)} ± "
+            f"{np.round(np.std(scores), 4)}"
             f"\n\n"
         )
     f.writelines("\n")
@@ -135,7 +151,9 @@ with open(work_dir / "stats_output.txt", "w") as f:
     for name, model in model_dict.items():
         # confusion matrix with plot
         clf = model.fit(X_train_resampled, y_train_resampled)
-        cm = confusion_matrix(y_test, clf.predict(X_test_pp),)
+        y_test_pp = (clf.predict_proba(X_test_pp)[:, 1] <=
+                     pp_threshold).astype('int')
+        cm = confusion_matrix(y_test, y_test_pp,)
         f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
         cm_dict[name] = cm
         f.writelines("\n")
@@ -147,8 +165,9 @@ with open(work_dir / "stats_output.txt", "w") as f:
     print("Calculating precision, recall, F-measure and support...")
     for name, model in model_dict.items():
         clf = model.fit(X_train_resampled, y_train_resampled)
-        class_report = classification_report(y_test,
-                                             clf.predict(X_test_pp),
+        y_test_pp = (clf.predict_proba(X_test_pp)[:, 1] <=
+                     pp_threshold).astype('int')
+        class_report = classification_report(y_test, y_test_pp,
                                              digits=4)
         f.writelines(
             f"Precision, recall, F-measure and support on "
@@ -162,9 +181,9 @@ with open(work_dir / "stats_output.txt", "w") as f:
     rates_dict = {}
     for name, model in model_dict.items():
         clf = model.fit(X_train_resampled, y_train_resampled)
-        model_roc_auc = roc_auc_score(y_test, clf.predict(X_test_pp))
-        fpr, tpr, thresholds = roc_curve(y_test,
-                                         clf.predict_proba(X_test_pp)[:, 1])
+        y_test_pp = clf.predict_proba(X_test_pp)[:, 1]
+        model_roc_auc = roc_auc_score(y_test, y_test_pp)
+        fpr, tpr, thresholds = roc_curve(y_test, y_test_pp)
         f.writelines(f"Model: {name.title()}\n"
                      f"FPR: {len(fpr)}\nTPR: {len(tpr)}\n")
         f.writelines(f"Number of thresholds: {len(thresholds)}\n")
@@ -176,23 +195,16 @@ with open(work_dir / "stats_output.txt", "w") as f:
     # cross validation average Brier score
     def display_scores(model, scores):
         f.writelines(
-            f"Cross-validated average Brier score for "
-            f"the {model.lower()} model:\n"
+            f"Cross-validated average Brier score for {model.lower()}: "
+            f"{scores.mean():.4f} ± {scores.std():.4f}\n\n"
         )
-        # f.writelines(f'Scores: {scores}')
-        f.writelines(f"Average Brier score: {scores.mean():.4f}\n")
-        f.writelines(f"Standard devation: {scores.std():.4f}\n")
-        f.writelines("\n")
 
     print("Calculating cross-validated average Brier score...")
     for name, model in model_dict.items():
-        clf = model.fit(X_train_resampled, y_train_resampled)
-        scores = cross_val_score(
-            model, clf.predict(X_test_pp).reshape(-1, 1),
-            y_test, scoring="neg_brier_score",
-            cv=6, n_jobs=-1,
-        )
-        del clf
+        scores = cross_val_score(model, X_train_resampled,
+                                 y_train_resampled,
+                                 scoring="neg_brier_score",
+                                 cv=6, n_jobs=-1,)
         display_scores(name, -scores)
 
 print(f"Time elapsed: {(time() - t0):.2f} seconds")
