@@ -11,7 +11,10 @@ from sklearn.compose import (make_column_selector,
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import make_pipeline
 from imblearn.under_sampling import RandomUnderSampler
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import (RandomForestClassifier,
+                              GradientBoostingClassifier)
+from xgboost import XGBClassifier
+from catboost import CatBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 import matplotlib.pyplot as plt
@@ -97,11 +100,15 @@ model_dict = {
         n_estimators=model_params['params_rf']['n_estimators'],
         max_depth=model_params['params_rf']['max_depth'],
         random_state=model_params['params_rf']['random_state'],
-        )
-        }
+        ),
+    'Gradient Boosting Classifier': GradientBoostingClassifier(),
+    'XGB Classifier': XGBClassifier(n_jobs=-1,),
+    'CatBoost Classifier': CatBoostClassifier(verbose=0,),
+    }
 
-fig, axes = plt.subplots(1, 3, figsize=(14, 4))
-for ax, (model_name, model_instance) in zip(axes, model_dict.items()):
+fig, axes = plt.subplots(2, 3, figsize=(14, 8))
+for ax, (model_name, model_instance) in zip(axes.flatten(),
+                                            model_dict.items()):
     means_std_list = learning_curves_data(model_instance, X, y)
     (train_sizes, train_scores_means, train_scores_std,
      val_scores_means, val_scores_std) = means_std_list
