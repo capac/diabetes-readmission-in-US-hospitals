@@ -1,11 +1,20 @@
-Training accuracy mean +/- std. dev. for logistic regression: 0.598 +/- 0.007
-Testing accuracy mean +/- std. dev. for logistic regression: 0.595 +/- 0.002
+Training accuracy mean ± std. dev. for logistic regression: 0.5978 ± 0.0073
+Testing accuracy mean ± std. dev. for logistic regression: 0.595 ± 0.002
 
-Training accuracy mean +/- std. dev. for decision tree classifier: 0.578 +/- 0.008
-Testing accuracy mean +/- std. dev. for decision tree classifier: 0.586 +/- 0.004
+Training accuracy mean ± std. dev. for decision tree classifier: 0.5776 ± 0.0082
+Testing accuracy mean ± std. dev. for decision tree classifier: 0.586 ± 0.004
 
-Training accuracy mean +/- std. dev. for random forest classifier: 0.587 +/- 0.007
-Testing accuracy mean +/- std. dev. for random forest classifier: 0.589 +/- 0.002
+Training accuracy mean ± std. dev. for random forest classifier: 0.5872 ± 0.0069
+Testing accuracy mean ± std. dev. for random forest classifier: 0.589 ± 0.002
+
+Training accuracy mean ± std. dev. for gradient boosting classifier: 0.5899 ± 0.0069
+Testing accuracy mean ± std. dev. for gradient boosting classifier: 0.598 ± 0.006
+
+Training accuracy mean ± std. dev. for xgb classifier: 0.579 ± 0.0117
+Testing accuracy mean ± std. dev. for xgb classifier: 0.572 ± 0.006
+
+Training accuracy mean ± std. dev. for catboost classifier: 0.5931 ± 0.009
+Testing accuracy mean ± std. dev. for catboost classifier: 0.595 ± 0.002
 
 
 Confusion matrix on logistic regression model: 
@@ -19,6 +28,18 @@ Confusion matrix on decision tree classifier model:
 Confusion matrix on random forest classifier model: 
 [[10115  5335]
  [  724   797]]
+
+Confusion matrix on gradient boosting classifier model: 
+[[9894 5556]
+ [ 673  848]]
+
+Confusion matrix on xgb classifier model: 
+[[9269 6181]
+ [ 680  841]]
+
+Confusion matrix on catboost classifier model: 
+[[9883 5567]
+ [ 678  843]]
 
 
 Precision, recall, F-measure and support on the logistic regression model: 
@@ -51,6 +72,36 @@ Precision, recall, F-measure and support on the random forest classifier model:
    macro avg     0.5316    0.5893    0.4889     16971
 weighted avg     0.8612    0.6430    0.7192     16971
 
+Precision, recall, F-measure and support on the gradient boosting classifier model: 
+              precision    recall  f1-score   support
+
+           0     0.9363    0.6402    0.7604     15450
+           1     0.1324    0.5575    0.2139      1521
+
+    accuracy                         0.6328     16971
+   macro avg     0.5343    0.5989    0.4872     16971
+weighted avg     0.8642    0.6328    0.7115     16971
+
+Precision, recall, F-measure and support on the xgb classifier model: 
+              precision    recall  f1-score   support
+
+           0     0.9317    0.5999    0.7299     15450
+           1     0.1198    0.5529    0.1969      1521
+
+    accuracy                         0.5957     16971
+   macro avg     0.5257    0.5764    0.4634     16971
+weighted avg     0.8589    0.5957    0.6821     16971
+
+Precision, recall, F-measure and support on the catboost classifier model: 
+              precision    recall  f1-score   support
+
+           0     0.9358    0.6397    0.7599     15450
+           1     0.1315    0.5542    0.2126      1521
+
+    accuracy                         0.6320     16971
+   macro avg     0.5337    0.5970    0.4862     16971
+weighted avg     0.8637    0.6320    0.7109     16971
+
 
 Model: Logistic Regression
 FPR: 2755
@@ -67,6 +118,24 @@ FPR: 2711
 TPR: 2711
 Number of thresholds: 2711
 
+Model: Gradient Boosting Classifier
+FPR: 4200
+TPR: 4200
+Number of thresholds: 4200
+
+Model: Xgb Classifier
+FPR: 2766
+TPR: 2766
+Number of thresholds: 2766
+
+Model: Catboost Classifier
+FPR: 2735
+TPR: 2735
+Number of thresholds: 2735
+
 Cross-validated average Brier score for logistic regression: 0.0805 ± 0.0003
 Cross-validated average Brier score for decision tree classifier: 0.0807 ± 0.0004
 Cross-validated average Brier score for random forest classifier: 0.0807 ± 0.0004
+Cross-validated average Brier score for gradient boosting classifier: 0.0805 ± 0.0003
+Cross-validated average Brier score for xgb classifier: 0.081 ± 0.0002
+Cross-validated average Brier score for catboost classifier: 0.0805 ± 0.0004

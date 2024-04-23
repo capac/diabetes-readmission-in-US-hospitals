@@ -17,7 +17,10 @@ from helper_funcs.helper_plots import (conf_mx_heat_plot,
                                        roc_curve_plot_with_auc)
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import (RandomForestClassifier,
+                              GradientBoostingClassifier)
+from xgboost import XGBClassifier
+from catboost import CatBoostClassifier
 from sklearn.metrics import (
     confusion_matrix,
     classification_report,
@@ -95,7 +98,10 @@ model_dict = {
         n_estimators=model_params['params_rf']['n_estimators'],
         max_depth=model_params['params_rf']['max_depth'],
         random_state=model_params['params_rf']['random_state'],
-        )
+        ),
+    'Gradient boosting classifier': GradientBoostingClassifier(),
+    'XGB Classifier': XGBClassifier(),
+    'CatBoost Classifier': CatBoostClassifier(verbose=0),
     }
 
 # calculating balanced accuracy, confusion matrix, classification report
@@ -116,9 +122,9 @@ with open(work_dir / "stats_output.txt", "w") as f:
                                     return_estimator=True, n_jobs=-1,
                                     error_score="raise",)
         f.writelines(
-            f"Training accuracy mean +/- std. dev. for {name.lower()}: "
-            f"{cv_results['test_score'].mean():.3f} +/- "
-            f"{cv_results['test_score'].std():.3f}"
+            f"Training accuracy mean ± std. dev. for {name.lower()}: "
+            f"{np.round(cv_results['test_score'].mean(), 4)} ± "
+            f"{np.round(cv_results['test_score'].std(), 4)}"
             f"\n"
         )
         scores = []
@@ -126,8 +132,8 @@ with open(work_dir / "stats_output.txt", "w") as f:
             scores.append(balanced_accuracy_score(y_test,
                                                   cv_model.predict(X_test_pp)))
         f.writelines(
-            f"Testing accuracy mean +/- std. dev. for {name.lower()}: "
-            f"{np.mean(scores):.3f} +/- {np.std(scores):.3f}"
+            f"Testing accuracy mean ± std. dev. for {name.lower()}: "
+            f"{np.mean(scores):.3f} ± {np.std(scores):.3f}"
             f"\n\n"
         )
     f.writelines("\n")
@@ -181,9 +187,11 @@ with open(work_dir / "stats_output.txt", "w") as f:
             f"{model.lower()}: "
         )
         # f.writelines(f'Scores: {scores}')
-        f.writelines(f"{np.round(scores.mean(), 4)} ± ")
-        f.writelines(f"{np.round(scores.std(), 4)}")
-        f.writelines("\n")
+        f.writelines(
+            f"{np.round(scores.mean(), 4)} ± "
+            f"{np.round(scores.std(), 4)}"
+            f"\n"
+        )
 
     print("Calculating cross-validated average Brier score...")
     for name, model in model_dict.items():
