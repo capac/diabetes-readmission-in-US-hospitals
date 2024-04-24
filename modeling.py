@@ -79,7 +79,7 @@ with open('params.json', 'r') as f:
     model_params = json.load(f)
 
 # testing several data science algorithms
-use_hyperparameters = False
+use_hyperparameters = True
 if use_hyperparameters:
     model_dict = {
         'Logistic regression': LogisticRegression(
@@ -112,7 +112,7 @@ else:
         }
 # calculating balanced accuracy, confusion matrix, classification report
 # roc curve and auc values, and average Brier score using custom threshold
-pp_threshold = 0.48
+pp_threshold = 0.49
 print(f'Threshold: {pp_threshold}')
 t0 = time()
 with open(work_dir / "stats_output.txt", "w") as f:
@@ -137,7 +137,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
         )
         scores = []
         for cv_model in cv_results["estimator"]:
-            y_test_pp = (cv_model.predict_proba(X_test_pp)[:, 1] <=
+            y_test_pp = (cv_model.predict_proba(X_test_pp)[:, 1] >=
                          pp_threshold).astype('int')
             scores.append(balanced_accuracy_score(y_test, y_test_pp))
         f.writelines(
@@ -151,7 +151,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
     for name, model in model_dict.items():
         # confusion matrix with plot
         clf = model.fit(X_train_resampled, y_train_resampled)
-        y_test_pp = (clf.predict_proba(X_test_pp)[:, 1] <=
+        y_test_pp = (clf.predict_proba(X_test_pp)[:, 1] >=
                      pp_threshold).astype('int')
         cm = confusion_matrix(y_test, y_test_pp,)
         f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
@@ -165,7 +165,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
     print("Calculating precision, recall, F-measure and support...")
     for name, model in model_dict.items():
         clf = model.fit(X_train_resampled, y_train_resampled)
-        y_test_pp = (clf.predict_proba(X_test_pp)[:, 1] <=
+        y_test_pp = (clf.predict_proba(X_test_pp)[:, 1] >=
                      pp_threshold).astype('int')
         class_report = classification_report(y_test, y_test_pp,
                                              digits=4)
