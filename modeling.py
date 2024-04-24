@@ -17,7 +17,10 @@ from helper_funcs.helper_plots import (conf_mx_heat_plot,
                                        roc_curve_plot_with_auc)
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import (RandomForestClassifier,
+                              AdaBoostClassifier,
+                              GradientBoostingClassifier)
+from sklearn.svm import SVC
 from sklearn.metrics import (
     confusion_matrix,
     classification_report,
@@ -78,9 +81,28 @@ X_train_pp, X_test_pp = preprocessing_data(X_train, X_test)
 with open('params.json', 'r') as f:
     model_params = json.load(f)
 
-# testing several data science algorithms
-use_hyperparameters = True
-if use_hyperparameters:
+########################################
+use_models_that_prioritize_recall = True
+########################################
+if use_models_that_prioritize_recall:
+    model_dict = {
+        'AdaBoost Classifier': AdaBoostClassifier(
+            algorithm='SAMME',
+            n_estimators=model_params['params_ad']['n_estimators'],
+            learning_rate=model_params['params_ad']['learning_rate'],
+            random_state=model_params['params_ad']['random_state'],
+            ),
+        'SVC': SVC(
+            probability=True,
+            C=model_params['params_svc']['C'],
+            random_state=model_params['params_svc']['random_state'],
+            ),
+        'Gradient Boosting Classifier': GradientBoostingClassifier(
+            learning_rate=model_params['params_gb']['learning_rate'],
+            random_state=model_params['params_gb']['random_state'],
+        ),
+    }
+else:
     model_dict = {
         'Logistic regression': LogisticRegression(
             n_jobs=-1, max_iter=4000,
@@ -99,17 +121,7 @@ if use_hyperparameters:
             random_state=model_params['params_rf']['random_state'],
             )
         }
-else:
-    model_dict = {
-        'Logistic regression': LogisticRegression(n_jobs=-1,
-                                                  max_iter=4000),
-        'Decision tree classifier': DecisionTreeClassifier(
-            random_state=model_params['params_dt']['random_state'],
-            ),
-        'Random forest classifier': RandomForestClassifier(
-            random_state=model_params['params_rf']['random_state'],
-            )
-        }
+
 # calculating balanced accuracy, confusion matrix, classification report
 # roc curve and auc values, and average Brier score using custom threshold
 pp_threshold = 0.49
