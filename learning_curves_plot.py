@@ -85,16 +85,16 @@ use_models_that_prioritize_recall = True
 ########################################
 if use_models_that_prioritize_recall:
     model_dict = {
+        'SVC': SVC(
+            probability=True,
+            C=model_params['params_svc']['C'],
+            random_state=model_params['params_svc']['random_state'],
+            ),
         'AdaBoost Classifier': AdaBoostClassifier(
             algorithm='SAMME',
             n_estimators=model_params['params_ad']['n_estimators'],
             learning_rate=model_params['params_ad']['learning_rate'],
             random_state=model_params['params_ad']['random_state'],
-            ),
-        'SVC': SVC(
-            probability=True,
-            C=model_params['params_svc']['C'],
-            random_state=model_params['params_svc']['random_state'],
             ),
         'Gradient Boosting Classifier': GradientBoostingClassifier(
             learning_rate=model_params['params_gb']['learning_rate'],
@@ -121,7 +121,14 @@ else:
             )
         }
 
-fig, axes = plt.subplots(2, 3, figsize=(14, 8))
+# plot settings
+row_length_in_px = 12
+column_length_in_px = 4
+nrows = 1
+ncols = 3
+
+fig, axes = plt.subplots(nrows, ncols, figsize=(row_length_in_px,
+                                                column_length_in_px))
 for ax, (model_name, model_instance) in zip(axes.flatten(),
                                             model_dict.items()):
     means_std_list = learning_curves_data(model_instance, X, y)
