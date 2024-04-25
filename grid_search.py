@@ -33,8 +33,11 @@ rus = RandomUnderSampler(sampling_strategy="majority", random_state=0)
 X_train_resampled, y_train_resampled = rus.fit_resample(X, y)
 
 # load nested parameters from JSON file
-with open('params.json', 'r') as f:
-    model_params = json.load(f)
+try:
+    with open('params.json', 'r') as f:
+        model_params = json.load(f)
+except FileNotFoundError:
+    model_params = {}
 
 ########################################
 use_models_that_prioritize_recall = True
