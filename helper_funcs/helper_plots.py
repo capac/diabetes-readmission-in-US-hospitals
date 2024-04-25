@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 
 # plot settings
 row_length_in_px = 12
-column_length_in_px = 8
-nrows = 2
+column_length_in_px = 4
+nrows = 1
 ncols = 3
 
 
