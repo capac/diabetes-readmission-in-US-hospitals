@@ -4,8 +4,8 @@ Testing accuracy mean ± std. dev. for svc: 0.593 ± 0.0025
 Training accuracy mean ± std. dev. for adaboost classifier: 0.5831 ± 0.0109
 Testing accuracy mean ± std. dev. for adaboost classifier: 0.5893 ± 0.0042
 
-Training accuracy mean ± std. dev. for gradient boosting classifier: 0.582 ± 0.0129
-Testing accuracy mean ± std. dev. for gradient boosting classifier: 0.578 ± 0.0034
+Training accuracy mean ± std. dev. for gradient boosting classifier: 0.5895 ± 0.0065
+Testing accuracy mean ± std. dev. for gradient boosting classifier: 0.5984 ± 0.0062
 
 
 Confusion matrix on svc model: 
@@ -17,8 +17,8 @@ Confusion matrix on adaboost classifier model:
  [ 673  848]]
 
 Confusion matrix on gradient boosting classifier model: 
-[[9588 5862]
- [ 713  808]]
+[[9895 5555]
+ [ 673  848]]
 
 
 Precision, recall, F-measure and support on the svc model: 
@@ -44,12 +44,12 @@ weighted avg     0.8633    0.6254    0.7057     16971
 Precision, recall, F-measure and support on the gradient boosting classifier model: 
               precision    recall  f1-score   support
 
-           0     0.9308    0.6206    0.7447     15450
-           1     0.1211    0.5312    0.1973      1521
+           0     0.9363    0.6405    0.7606     15450
+           1     0.1324    0.5575    0.2140      1521
 
-    accuracy                         0.6126     16971
-   macro avg     0.5260    0.5759    0.4710     16971
-weighted avg     0.8582    0.6126    0.6956     16971
+    accuracy                         0.6330     16971
+   macro avg     0.5344    0.5990    0.4873     16971
+weighted avg     0.8643    0.6330    0.7116     16971
 
 
 Model: Svc
@@ -63,13 +63,13 @@ TPR: 362
 Number of thresholds: 362
 
 Model: Gradient Boosting Classifier
-FPR: 2799
-TPR: 2799
-Number of thresholds: 2799
+FPR: 4205
+TPR: 4205
+Number of thresholds: 4205
 
 Cross-validated average Brier score for svc: 0.2366 ± 0.001
 
 Cross-validated average Brier score for adaboost classifier: 0.2389 ± 0.001
 
-Cross-validated average Brier score for gradient boosting classifier: 0.2461 ± 0.0032
+Cross-validated average Brier score for gradient boosting classifier: 0.2365 ± 0.0027
 
