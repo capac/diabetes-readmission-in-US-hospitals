@@ -8,8 +8,10 @@ from imblearn.under_sampling import RandomUnderSampler
 from sklearn.model_selection import GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.ensemble import RandomForestClassifier
-
+from sklearn.ensemble import (RandomForestClassifier,
+                              AdaBoostClassifier,
+                              GradientBoostingClassifier)
+from sklearn.svm import SVC
 
 work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
                          'uci-ml-repository/diabetes-in-130-US-hospitals'
@@ -30,27 +32,65 @@ y = df['readmitted'].copy()
 rus = RandomUnderSampler(sampling_strategy="majority", random_state=0)
 X_train_resampled, y_train_resampled = rus.fit_resample(X, y)
 
-# logistic regression parameters
-lr_param_grid = {'C': np.logspace(-3, 1, 5),
-                 'random_state': [42]}
-lr_clf = LogisticRegression(max_iter=4000)
+# load nested parameters from JSON file
+try:
+    with open('params.json', 'r') as f:
+        model_params = json.load(f)
+except FileNotFoundError:
+    model_params = {}
 
-# decision tree parameters
-dt_param_grid = {'max_depth': np.arange(4, 25, 4),
-                 'min_samples_split': [5, 10, 20, 50,],
-                 'random_state': [42]}
-dt_clf = DecisionTreeClassifier()
+########################################
+use_models_that_prioritize_recall = True
+########################################
+if use_models_that_prioritize_recall:
+    model_dict = {
+        'AdaBoost Classifier': AdaBoostClassifier(algorithm='SAMME'),
+        'SVC': SVC(probability=True),
+        'Gradient Boosting Classifier': GradientBoostingClassifier(),
+    }
+    # adaboost classifier parameters
+    ad_param_grid = {'n_estimators': [20, 50, 100,],
+                     'learning_rate': [0.5, 1.0, 2.0],
+                     'random_state': [42]}
+    ad_clf = AdaBoostClassifier(algorithm='SAMME')
 
-# random forest parameters
-rf_param_grid = {'n_estimators': [200, 500, 1000],
-                 'max_depth': np.arange(4, 25, 4),
-                 'random_state': [42]}
-rf_clf = RandomForestClassifier()
+    # support vector classifier parameters
+    svc_param_grid = {'C': np.logspace(-1, 1, 3),
+                      'random_state': [42]}
+    svc_clf = SVC(probability=True)
 
-param_grid_dict = {'lr': lr_param_grid,
-                   'dt': dt_param_grid,
-                   'rf': rf_param_grid}
-clf_list = [lr_clf, dt_clf, rf_clf]
+    # gradient boosting classifier parameters
+    gb_param_grid = {'n_estimators': [20, 50, 100,],
+                     'learning_rate': [0.5, 1.0, 2.0],
+                     'random_state': [42]}
+    gb_clf = GradientBoostingClassifier()
+
+    param_grid_dict = {'ad': ad_param_grid,
+                       'svc': svc_param_grid,
+                       'gb': gb_param_grid}
+    clf_list = [ad_clf, svc_clf, gb_clf]
+else:
+    # logistic regression parameters
+    lr_param_grid = {'C': np.logspace(-1, 1, 3),
+                     'random_state': [42]}
+    lr_clf = LogisticRegression(max_iter=4000)
+
+    # decision tree parameters
+    dt_param_grid = {'max_depth': np.arange(4, 25, 4),
+                     'min_samples_split': [5, 10, 20, 50,],
+                     'random_state': [42]}
+    dt_clf = DecisionTreeClassifier()
+
+    # random forest parameters
+    rf_param_grid = {'n_estimators': [50, 100, 200],
+                     'max_depth': np.arange(4, 25, 4),
+                     'random_state': [42]}
+    rf_clf = RandomForestClassifier()
+
+    param_grid_dict = {'lr': lr_param_grid,
+                       'dt': dt_param_grid,
+                       'rf': rf_param_grid}
+    clf_list = [lr_clf, dt_clf, rf_clf]
 
 
 def calculate_best_parameters(clf, param_grid):
@@ -68,11 +108,10 @@ def calculate_best_parameters(clf, param_grid):
 
 
 with open('params.json', 'w') as f:
-    parameters_dict = {}
     for clf, (name, param) in zip(clf_list, param_grid_dict.items()):
         best_params = calculate_best_parameters(clf, param)
         for key, val in best_params.items():
             if isinstance(val, np.int64):
                 best_params[key] = int(val)
-        parameters_dict[f'params_{name}'] = best_params
-    json.dump(parameters_dict, f, indent=4,)
+        model_params.setdefault(f'params_{name}', {}).update(best_params)
+    json.dump(model_params, f, indent=4,)

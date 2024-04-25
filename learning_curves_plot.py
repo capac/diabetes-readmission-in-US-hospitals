@@ -11,12 +11,12 @@ from sklearn.compose import (make_column_selector,
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import make_pipeline
 from imblearn.under_sampling import RandomUnderSampler
-from sklearn.ensemble import (RandomForestClassifier,
-                              GradientBoostingClassifier)
-from xgboost import XGBClassifier
-from catboost import CatBoostClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import (RandomForestClassifier,
+                              AdaBoostClassifier,
+                              GradientBoostingClassifier)
+from sklearn.svm import SVC
 import matplotlib.pyplot as plt
 from matplotlib import ticker
 
@@ -64,14 +64,10 @@ X_resampled, y_resampled = rus.fit_resample(X_pp, y)
 
 
 def learning_curves_data(estimator, X, y, cv=5, train_sizes=tr_arr):
-    train_sizes, train_scores, val_scores = learning_curve(estimator,
-                                                           X_resampled,
-                                                           y_resampled,
-                                                           cv=cv, n_jobs=-1,
-                                                           train_sizes=tr_arr,
-                                                           scoring='accuracy',
-                                                           shuffle=True,
-                                                           random_state=42,)
+    train_sizes, train_scores, val_scores = learning_curve(
+        estimator, X_resampled, y_resampled,
+        cv=cv, n_jobs=-1, train_sizes=tr_arr,
+        scoring='accuracy', shuffle=True, random_state=42,)
     train_scores_mean = np.mean(train_scores, axis=1)
     train_scores_std = np.std(train_scores, axis=1)
     val_scores_mean = np.mean(val_scores, axis=1)
@@ -84,27 +80,46 @@ def learning_curves_data(estimator, X, y, cv=5, train_sizes=tr_arr):
 with open('params.json', 'r') as f:
     model_params = json.load(f)
 
-model_dict = {
-    'Logistic regression': LogisticRegression(
-        n_jobs=-1,
-        C=model_params['params_lr']['C'],
-        solver='newton-cholesky'
+########################################
+use_models_that_prioritize_recall = True
+########################################
+if use_models_that_prioritize_recall:
+    model_dict = {
+        'AdaBoost Classifier': AdaBoostClassifier(
+            algorithm='SAMME',
+            n_estimators=model_params['params_ad']['n_estimators'],
+            learning_rate=model_params['params_ad']['learning_rate'],
+            random_state=model_params['params_ad']['random_state'],
+            ),
+        'SVC': SVC(
+            probability=True,
+            C=model_params['params_svc']['C'],
+            random_state=model_params['params_svc']['random_state'],
+            ),
+        'Gradient Boosting Classifier': GradientBoostingClassifier(
+            learning_rate=model_params['params_gb']['learning_rate'],
+            random_state=model_params['params_gb']['random_state'],
         ),
-    'Decision tree classifier': DecisionTreeClassifier(
-        max_depth=model_params['params_dt']['max_depth'],
-        min_samples_split=model_params['params_dt']['min_samples_split'],
-        random_state=model_params['params_dt']['random_state'],
-        ),
-    'Random forest classifier': RandomForestClassifier(
-        n_jobs=-1,
-        n_estimators=model_params['params_rf']['n_estimators'],
-        max_depth=model_params['params_rf']['max_depth'],
-        random_state=model_params['params_rf']['random_state'],
-        ),
-    'Gradient Boosting Classifier': GradientBoostingClassifier(),
-    'XGB Classifier': XGBClassifier(n_jobs=-1,),
-    'CatBoost Classifier': CatBoostClassifier(verbose=0,),
     }
+else:
+    model_dict = {
+        'Logistic regression': LogisticRegression(
+            n_jobs=-1, max_iter=4000,
+            C=model_params['params_lr']['C'],
+            solver='newton-cholesky'
+            ),
+        'Decision tree classifier': DecisionTreeClassifier(
+            max_depth=model_params['params_dt']['max_depth'],
+            min_samples_split=model_params['params_dt']['min_samples_split'],
+            random_state=model_params['params_dt']['random_state'],
+            ),
+        'Random forest classifier': RandomForestClassifier(
+            n_jobs=-1,
+            n_estimators=model_params['params_rf']['n_estimators'],
+            max_depth=model_params['params_rf']['max_depth'],
+            random_state=model_params['params_rf']['random_state'],
+            )
+        }
 
 fig, axes = plt.subplots(2, 3, figsize=(14, 8))
 for ax, (model_name, model_instance) in zip(axes.flatten(),

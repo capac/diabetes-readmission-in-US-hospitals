@@ -1,4 +1,18 @@
 {
+    "params_ad": {
+        "learning_rate": 0.5,
+        "n_estimators": 100,
+        "random_state": 42
+    },
+    "params_svc": {
+        "C": 1.0,
+        "random_state": 42
+    },
+    "params_gb": {
+        "learning_rate": 0.5,
+        "n_estimators": 20,
+        "random_state": 42
+    },
     "params_lr": {
         "C": 0.1,
         "random_state": 42

@@ -1,141 +1,79 @@
+Training accuracy mean ± std. dev. for adaboost classifier: 0.5831 ± 0.0109
+Testing accuracy mean ± std. dev. for adaboost classifier: 0.59 ± 0.0042
 Training accuracy mean ± std. dev. for logistic regression: 0.5978 ± 0.0073
 Testing accuracy mean ± std. dev. for logistic regression: 0.595 ± 0.002
 
+Training accuracy mean ± std. dev. for svc: 0.5964 ± 0.0091
+Testing accuracy mean ± std. dev. for svc: 0.5947 ± 0.0027
 Training accuracy mean ± std. dev. for decision tree classifier: 0.5776 ± 0.0082
 Testing accuracy mean ± std. dev. for decision tree classifier: 0.586 ± 0.004
 
-Training accuracy mean ± std. dev. for random forest classifier: 0.5872 ± 0.0069
-Testing accuracy mean ± std. dev. for random forest classifier: 0.589 ± 0.002
-
-Training accuracy mean ± std. dev. for gradient boosting classifier: 0.5899 ± 0.0069
-Testing accuracy mean ± std. dev. for gradient boosting classifier: 0.598 ± 0.006
-
-Training accuracy mean ± std. dev. for xgb classifier: 0.579 ± 0.0117
-Testing accuracy mean ± std. dev. for xgb classifier: 0.572 ± 0.006
-
-Training accuracy mean ± std. dev. for catboost classifier: 0.5931 ± 0.009
-Testing accuracy mean ± std. dev. for catboost classifier: 0.595 ± 0.002
+Training accuracy mean ± std. dev. for gradient boosting classifier: 0.582 ± 0.0129
+Testing accuracy mean ± std. dev. for gradient boosting classifier: 0.5787 ± 0.0029
 
 
-Confusion matrix on logistic regression model: 
-[[10388  5062]
- [  729   792]]
+Confusion matrix on adaboost classifier model: 
+[[9029 6421]
+ [ 609  912]]
 
-Confusion matrix on decision tree classifier model: 
-[[8811 6639]
- [ 594  927]]
-
-Confusion matrix on random forest classifier model: 
-[[10115  5335]
- [  724   797]]
+Confusion matrix on svc model: 
+[[9732 5718]
+ [ 665  856]]
 
 Confusion matrix on gradient boosting classifier model: 
-[[9894 5556]
- [ 673  848]]
-
-Confusion matrix on xgb classifier model: 
-[[9269 6181]
- [ 680  841]]
-
-Confusion matrix on catboost classifier model: 
-[[9883 5567]
- [ 678  843]]
+[[9256 6194]
+ [ 675  846]]
 
 
-Precision, recall, F-measure and support on the logistic regression model: 
+Precision, recall, F-measure and support on the adaboost classifier model: 
               precision    recall  f1-score   support
 
-           0     0.9344    0.6724    0.7820     15450
-           1     0.1353    0.5207    0.2148      1521
+           0     0.9368    0.5844    0.7198     15450
+           1     0.1244    0.5996    0.2060      1521
 
-    accuracy                         0.6588     16971
-   macro avg     0.5349    0.5965    0.4984     16971
-weighted avg     0.8628    0.6588    0.7312     16971
+    accuracy                         0.5858     16971
+   macro avg     0.5306    0.5920    0.4629     16971
+weighted avg     0.8640    0.5858    0.6737     16971
 
-Precision, recall, F-measure and support on the decision tree classifier model: 
+Precision, recall, F-measure and support on the svc model: 
               precision    recall  f1-score   support
 
-           0     0.9368    0.5703    0.7090     15450
-           1     0.1225    0.6095    0.2040      1521
+           0     0.9360    0.6299    0.7530     15450
+           1     0.1302    0.5628    0.2115      1521
 
-    accuracy                         0.5738     16971
-   macro avg     0.5297    0.5899    0.4565     16971
-weighted avg     0.8639    0.5738    0.6637     16971
-
-Precision, recall, F-measure and support on the random forest classifier model: 
-              precision    recall  f1-score   support
-
-           0     0.9332    0.6547    0.7695     15450
-           1     0.1300    0.5240    0.2083      1521
-
-    accuracy                         0.6430     16971
-   macro avg     0.5316    0.5893    0.4889     16971
-weighted avg     0.8612    0.6430    0.7192     16971
+    accuracy                         0.6239     16971
+   macro avg     0.5331    0.5963    0.4823     16971
+weighted avg     0.8638    0.6239    0.7045     16971
 
 Precision, recall, F-measure and support on the gradient boosting classifier model: 
               precision    recall  f1-score   support
 
-           0     0.9363    0.6402    0.7604     15450
-           1     0.1324    0.5575    0.2139      1521
+           0     0.9320    0.5991    0.7294     15450
+           1     0.1202    0.5562    0.1976      1521
 
-    accuracy                         0.6328     16971
-   macro avg     0.5343    0.5989    0.4872     16971
-weighted avg     0.8642    0.6328    0.7115     16971
-
-Precision, recall, F-measure and support on the xgb classifier model: 
-              precision    recall  f1-score   support
-
-           0     0.9317    0.5999    0.7299     15450
-           1     0.1198    0.5529    0.1969      1521
-
-    accuracy                         0.5957     16971
-   macro avg     0.5257    0.5764    0.4634     16971
-weighted avg     0.8589    0.5957    0.6821     16971
-
-Precision, recall, F-measure and support on the catboost classifier model: 
-              precision    recall  f1-score   support
-
-           0     0.9358    0.6397    0.7599     15450
-           1     0.1315    0.5542    0.2126      1521
-
-    accuracy                         0.6320     16971
-   macro avg     0.5337    0.5970    0.4862     16971
-weighted avg     0.8637    0.6320    0.7109     16971
+    accuracy                         0.5953     16971
+   macro avg     0.5261    0.5777    0.4635     16971
+weighted avg     0.8593    0.5953    0.6817     16971
 
 
-Model: Logistic Regression
-FPR: 2755
-TPR: 2755
-Number of thresholds: 2755
+Model: Adaboost Classifier
+FPR: 362
+TPR: 362
+Number of thresholds: 362
 
-Model: Decision Tree Classifier
-FPR: 16
-TPR: 16
-Number of thresholds: 16
-
-Model: Random Forest Classifier
-FPR: 2711
-TPR: 2711
-Number of thresholds: 2711
+Model: Svc
+FPR: 2667
+TPR: 2667
+Number of thresholds: 2667
 
 Model: Gradient Boosting Classifier
-FPR: 4200
-TPR: 4200
-Number of thresholds: 4200
+FPR: 2799
+TPR: 2799
+Number of thresholds: 2799
 
-Model: Xgb Classifier
-FPR: 2766
-TPR: 2766
-Number of thresholds: 2766
+Cross-validated average Brier score for adaboost classifier: 0.2389 ± 0.0010
 
-Model: Catboost Classifier
-FPR: 2735
-TPR: 2735
-Number of thresholds: 2735
+Cross-validated average Brier score for svc: 0.2366 ± 0.0010
 
-Cross-validated average Brier score for logistic regression: 0.0805 ± 0.0003
-Cross-validated average Brier score for decision tree classifier: 0.0807 ± 0.0004
-Cross-validated average Brier score for random forest classifier: 0.0807 ± 0.0004
-Cross-validated average Brier score for gradient boosting classifier: 0.0805 ± 0.0003
-Cross-validated average Brier score for xgb classifier: 0.081 ± 0.0002
-Cross-validated average Brier score for catboost classifier: 0.0805 ± 0.0004
+Cross-validated average Brier score for gradient boosting classifier: 0.2461 ± 0.0032
+
