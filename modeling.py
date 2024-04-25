@@ -208,7 +208,9 @@ with open(work_dir / "stats_output.txt", "w") as f:
     def display_scores(model, scores):
         f.writelines(
             f"Cross-validated average Brier score for {model.lower()}: "
-            f"{scores.mean():.4f} ± {scores.std():.4f}\n\n"
+            f"{np.round(scores.mean(), 4)} ± "
+            f"{np.round(scores.std(), 4)}"
+            f"\n\n"
         )
 
     print("Calculating cross-validated average Brier score...")
