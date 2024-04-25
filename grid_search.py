@@ -44,31 +44,32 @@ use_models_that_prioritize_recall = True
 ########################################
 if use_models_that_prioritize_recall:
     model_dict = {
-        'AdaBoost Classifier': AdaBoostClassifier(algorithm='SAMME'),
         'SVC': SVC(probability=True),
+        'AdaBoost Classifier': AdaBoostClassifier(algorithm='SAMME'),
         'Gradient Boosting Classifier': GradientBoostingClassifier(),
     }
-    # adaboost classifier parameters
-    ad_param_grid = {'n_estimators': [20, 50, 100,],
-                     'learning_rate': [0.5, 1.0, 2.0],
-                     'random_state': [42]}
-    ad_clf = AdaBoostClassifier(algorithm='SAMME')
-
     # support vector classifier parameters
-    svc_param_grid = {'C': np.logspace(-1, 1, 3),
+    svc_param_grid = {'C': np.logspace(-1, 2, 4),
+                      'gamma': [0.05, 0.1, 0.5],
                       'random_state': [42]}
     svc_clf = SVC(probability=True)
 
+    # adaboost classifier parameters
+    ad_param_grid = {'n_estimators': [50, 100, 200],
+                     'learning_rate': [0.1, 0.5, 1.0],
+                     'random_state': [42]}
+    ad_clf = AdaBoostClassifier(algorithm='SAMME')
+
     # gradient boosting classifier parameters
-    gb_param_grid = {'n_estimators': [20, 50, 100,],
-                     'learning_rate': [0.5, 1.0, 2.0],
+    gb_param_grid = {'n_estimators': [5, 10, 20],
+                     'learning_rate': [0.05, 0.1, 0.5],
                      'random_state': [42]}
     gb_clf = GradientBoostingClassifier()
 
-    param_grid_dict = {'ad': ad_param_grid,
-                       'svc': svc_param_grid,
+    param_grid_dict = {'svc': svc_param_grid,
+                       'ad': ad_param_grid,
                        'gb': gb_param_grid}
-    clf_list = [ad_clf, svc_clf, gb_clf]
+    clf_list = [svc_clf, ad_clf, gb_clf]
 else:
     # logistic regression parameters
     lr_param_grid = {'C': np.logspace(-1, 1, 3),

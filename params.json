@@ -6,11 +6,12 @@
     },
     "params_svc": {
         "C": 1.0,
-        "random_state": 42
+        "random_state": 42,
+        "gamma": 0.05
     },
     "params_gb": {
-        "learning_rate": 0.5,
-        "n_estimators": 20,
+        "learning_rate": 0.1,
+        "n_estimators": 10,
         "random_state": 42
     },
     "params_lr": {
