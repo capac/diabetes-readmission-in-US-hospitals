@@ -86,18 +86,18 @@ use_models_that_prioritize_recall = True
 ########################################
 if use_models_that_prioritize_recall:
     model_dict = {
-        'AdaBoost Classifier': AdaBoostClassifier(
-            algorithm='SAMME',
-            n_estimators=model_params['params_ad']['n_estimators'],
-            learning_rate=model_params['params_ad']['learning_rate'],
-            random_state=model_params['params_ad']['random_state'],
-            ),
         'SVC': SVC(
             probability=True,
             C=model_params['params_svc']['C'],
             random_state=model_params['params_svc']['random_state'],
             ),
-        'Gradient Boosting Classifier': GradientBoostingClassifier(
+        'AdaBoost classifier': AdaBoostClassifier(
+            algorithm='SAMME',
+            n_estimators=model_params['params_ad']['n_estimators'],
+            learning_rate=model_params['params_ad']['learning_rate'],
+            random_state=model_params['params_ad']['random_state'],
+            ),
+        'Gradient boosting classifier': GradientBoostingClassifier(
             learning_rate=model_params['params_gb']['learning_rate'],
             random_state=model_params['params_gb']['random_state'],
         ),
@@ -123,9 +123,7 @@ else:
         }
 
 # calculating balanced accuracy, confusion matrix, classification report
-# roc curve and auc values, and average Brier score using custom threshold
-pp_threshold = 0.49
-print(f'Threshold: {pp_threshold}')
+# roc curve and auc values, and average Brier score
 t0 = time()
 with open(work_dir / "stats_output.txt", "w") as f:
     rus = RandomUnderSampler(sampling_strategy='majority',
@@ -149,8 +147,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
         )
         scores = []
         for cv_model in cv_results["estimator"]:
-            y_test_pp = (cv_model.predict_proba(X_test_pp)[:, 1] >=
-                         pp_threshold).astype('int')
+            y_test_pp = cv_model.predict(X_test_pp)
             scores.append(balanced_accuracy_score(y_test, y_test_pp))
         f.writelines(
             f"Testing accuracy mean ± std. dev. for {name.lower()}: "
@@ -163,8 +160,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
     for name, model in model_dict.items():
         # confusion matrix with plot
         clf = model.fit(X_train_resampled, y_train_resampled)
-        y_test_pp = (clf.predict_proba(X_test_pp)[:, 1] >=
-                     pp_threshold).astype('int')
+        y_test_pp = clf.predict(X_test_pp)
         cm = confusion_matrix(y_test, y_test_pp,)
         f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
         cm_dict[name] = cm
@@ -177,8 +173,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
     print("Calculating precision, recall, F-measure and support...")
     for name, model in model_dict.items():
         clf = model.fit(X_train_resampled, y_train_resampled)
-        y_test_pp = (clf.predict_proba(X_test_pp)[:, 1] >=
-                     pp_threshold).astype('int')
+        y_test_pp = clf.predict(X_test_pp)
         class_report = classification_report(y_test, y_test_pp,
                                              digits=4)
         f.writelines(
