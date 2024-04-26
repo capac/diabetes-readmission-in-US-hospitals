@@ -88,6 +88,7 @@ if use_models_that_prioritize_recall:
         'SVC': SVC(
             probability=True,
             C=model_params['params_svc']['C'],
+            gamma=model_params['params_svc']['gamma'],
             random_state=model_params['params_svc']['random_state'],
             ),
         'AdaBoost Classifier': AdaBoostClassifier(
@@ -97,6 +98,7 @@ if use_models_that_prioritize_recall:
             random_state=model_params['params_ad']['random_state'],
             ),
         'Gradient Boosting Classifier': GradientBoostingClassifier(
+            n_estimators=model_params['params_gb']['n_estimators'],
             learning_rate=model_params['params_gb']['learning_rate'],
             random_state=model_params['params_gb']['random_state'],
         ),
@@ -144,10 +146,10 @@ for ax, (model_name, model_instance) in zip(axes.flatten(),
     ax.plot(train_sizes, val_scores_means, 'b.-',
             linewidth=1, label='Validation')
     ax.legend(loc='best', fontsize=12)
-    ax.set_title('Learning curve for {0:s}'.format(model_name.lower()),
-                 fontsize=13)
-    ax.set_xlabel('Training examples (in units of $10^3$)',
-                  fontsize=12)
+    if len(model_name) > 3:
+        ax.set_title(f'ROC curve for {model_name.lower()}', fontsize=11)
+    else:
+        ax.set_title(f'ROC curve for {model_name.upper()}', fontsize=11)
     ticks = ticker.FuncFormatter(lambda x, _: '{0:g}'.format(x*1e-3))
     ax.xaxis.set_major_formatter(ticks)
     ax.set_ylabel('Score', fontsize=12)
