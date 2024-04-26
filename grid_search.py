@@ -50,7 +50,7 @@ if use_models_that_prioritize_recall:
     }
     # support vector classifier parameters
     svc_param_grid = {'C': np.logspace(-1, 2, 4),
-                      'gamma': [0.05, 0.1, 0.5],
+                      'gamma': [0.1, 0.2, 0.5, 1.0],
                       'random_state': [42]}
     svc_clf = SVC(probability=True)
 
