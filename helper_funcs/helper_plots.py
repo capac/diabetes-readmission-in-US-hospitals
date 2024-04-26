@@ -14,7 +14,7 @@ def roc_curve_plot_with_auc(rates_dict, work_dir):
     fig, axes = plt.subplots(nrows, ncols, figsize=(row_length_in_px,
                                                     column_length_in_px))
     rates_tuples = rates_dict.items()
-    for ax, (name, rates_list) in zip(axes.flatten(), rates_tuples):
+    for ax, (model_name, rates_list) in zip(axes.flatten(), rates_tuples):
         fpr, tpr, model_roc_auc = rates_list
         ax.plot(fpr, tpr, 'b.-', label='AUC: {:.4f}'.format(model_roc_auc))
         ax.plot([0, 1], [0, 1], 'r--')
@@ -24,7 +24,10 @@ def roc_curve_plot_with_auc(rates_dict, work_dir):
         plt.setp(ax.get_yticklabels(), fontsize=10)
         ax.set_xlabel('False Positive Rate', fontsize=10)
         ax.set_ylabel('True Positive Rate', fontsize=10)
-        ax.set_title('ROC curve for {0:s}'.format(name.lower()), fontsize=11)
+        if len(model_name) > 3:
+            ax.set_title(f'ROC curve for {model_name.lower()}', fontsize=11)
+        else:
+            ax.set_title(f'ROC curve for {model_name.upper()}', fontsize=11)
         ax.legend(loc='lower right', fontsize=12)
     fig.suptitle('Receiver operating characteristic curves', fontsize=12)
     fig.tight_layout()
@@ -51,7 +54,10 @@ def conf_mx_heat_plot(cm_dict, work_dir):
         plt.tick_params(which='both', bottom=False, left=False)
         cbar = ax.collections[0].colorbar
         cbar.ax.tick_params(labelsize=8)
-        ax.set_title(f'Heatmap for {model_name.lower()}', fontsize=11)
+        if len(model_name) > 3:
+            ax.set_title(f'Heatmap for {model_name.lower()}', fontsize=11)
+        else:
+            ax.set_title(f'Heatmap for {model_name.upper()}', fontsize=11)
         ax.set_xlabel('Predicted values', fontsize=10)
         ax.set_ylabel('Actual values', fontsize=10)
     fig.suptitle('Confusion matrix heatmaps', fontsize=12)
