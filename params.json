@@ -5,9 +5,9 @@
         "random_state": 42
     },
     "params_svc": {
-        "C": 1.0,
+        "C": 0.5,
         "random_state": 42,
-        "gamma": 0.05
+        "gamma": 0.02
     },
     "params_gb": {
         "learning_rate": 0.1,
