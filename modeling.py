@@ -139,18 +139,31 @@ with open(work_dir / "stats_output.txt", "w") as f:
                                     return_train_score=True,
                                     return_estimator=True, n_jobs=-1,
                                     error_score="raise",)
+        if len(name) > 3:
+            f.writelines(
+                f"Training accuracy mean ± std. dev. for {name.lower()}: "
+            )
+        else:
+            f.writelines(
+                f"Training accuracy mean ± std. dev. for {name.upper()}: "
+            )
         f.writelines(
-            f"Training accuracy mean ± std. dev. for {name.lower()}: "
-            f"{np.round(cv_results['test_score'].mean(), 4)} ± "
-            f"{np.round(cv_results['test_score'].std(), 4)}"
-            f"\n"
-        )
+                f"{np.round(cv_results['test_score'].mean(), 4)} ± "
+                f"{np.round(cv_results['test_score'].std(), 4)}\n"
+            )
         scores = []
         for cv_model in cv_results["estimator"]:
             y_test_pp = cv_model.predict(X_test_pp)
             scores.append(balanced_accuracy_score(y_test, y_test_pp))
+        if len(name) > 3:
+            f.writelines(
+                f"Testing accuracy mean ± std. dev. for {name.lower()}: "
+            )
+        else:
+            f.writelines(
+                f"Testing accuracy mean ± std. dev. for {name.upper()}: "
+            )
         f.writelines(
-            f"Testing accuracy mean ± std. dev. for {name.lower()}: "
             f"{np.round(np.mean(scores), 4)} ± "
             f"{np.round(np.std(scores), 4)}"
             f"\n\n"
@@ -162,7 +175,10 @@ with open(work_dir / "stats_output.txt", "w") as f:
         clf = model.fit(X_train_resampled, y_train_resampled)
         y_test_pp = clf.predict(X_test_pp)
         cm = confusion_matrix(y_test, y_test_pp,)
-        f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
+        if len(name) > 3:
+            f.writelines(f"Confusion matrix on {name.lower()} model: \n{cm}\n")
+        else:
+            f.writelines(f"Confusion matrix on {name.upper()} model: \n{cm}\n")
         cm_dict[name] = cm
         f.writelines("\n")
         del clf
@@ -176,10 +192,16 @@ with open(work_dir / "stats_output.txt", "w") as f:
         y_test_pp = clf.predict(X_test_pp)
         class_report = classification_report(y_test, y_test_pp,
                                              digits=4)
-        f.writelines(
-            f"Precision, recall, F-measure and support on "
-            f"the {name.lower()} model: \n{class_report}\n"
-        )
+        if len(name) > 3:
+            f.writelines(
+                f"Precision, recall, F-measure and support on "
+                f"the {name.lower()} model: \n{class_report}\n"
+            )
+        else:
+            f.writelines(
+                f"Precision, recall, F-measure and support on "
+                f"the {name.upper()} model: \n{class_report}\n"
+            )
         del clf
     f.writelines("\n")
 
@@ -191,9 +213,14 @@ with open(work_dir / "stats_output.txt", "w") as f:
         y_test_pp = clf.predict_proba(X_test_pp)[:, 1]
         model_roc_auc = roc_auc_score(y_test, y_test_pp)
         fpr, tpr, thresholds = roc_curve(y_test, y_test_pp)
-        f.writelines(f"Model: {name.title()}\n"
-                     f"FPR: {len(fpr)}\nTPR: {len(tpr)}\n")
-        f.writelines(f"Number of thresholds: {len(thresholds)}\n")
+        if len(name) > 3:
+            f.writelines(f"Model: {name.capitalize()}\n")
+        else:
+            f.writelines(f"Model: {name.upper()}\n")
+        f.writelines(
+            f"FPR: {len(fpr)}\nTPR: {len(tpr)}\n"
+            f"Number of thresholds: {len(thresholds)}\n"
+        )
         rates_dict[name] = [fpr, tpr, model_roc_auc]
         f.writelines("\n")
         del clf
@@ -201,11 +228,18 @@ with open(work_dir / "stats_output.txt", "w") as f:
 
     # cross validation average Brier score
     def display_scores(model, scores):
+        if len(model) > 3:
+            f.writelines(
+                f"Cross-validated average Brier score for {model.lower()}: "
+            )
+        else:
+            f.writelines(
+                f"Cross-validated average Brier score for {model.upper()}: "
+            )
         f.writelines(
-            f"Cross-validated average Brier score for {model.lower()}: "
             f"{np.round(scores.mean(), 4)} ± "
             f"{np.round(scores.std(), 4)}"
-            f"\n\n"
+            f"\n"
         )
 
     print("Calculating cross-validated average Brier score...")
