@@ -2,12 +2,10 @@
 
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
 from pathlib import Path
 
-home = os.environ['HOME']
-work_dir = Path(home) / 'Programming/Python/machine-learning-exercises/'\
-                        'uci-ml-repository/diabetes-in-130-US-hospitals/'
+work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
+                         'uci-ml-repository/diabetes-in-130-US-hospitals/'
 data_file = work_dir / 'data/diabetic_data.csv'
 
 # bar plot style with directory path
@@ -16,7 +14,11 @@ plt.style.use(barplot_style)
 
 df = pd.read_csv(data_file, na_values='?', low_memory=False)
 obj_cols = df.select_dtypes('object').columns
-df[obj_cols] = df[obj_cols].astype('category')
+df[obj_cols] = df[obj_cols].astype('string')
+
+# change np.nan to 'None' in 'max_glu_serum' and 'A1Cresult' columns
+df[['max_glu_serum', 'A1Cresult']] = \
+    df[['max_glu_serum', 'A1Cresult']].fillna('None')
 
 # missing values
 missing_values = df.isnull().sum()/df.shape[0]*100
@@ -32,7 +34,7 @@ payer_code_sorted_df = df['payer_code'].value_counts(dropna=False,
                                                      normalize=True)*100
 payer_code_sorted_df = payer_code_sorted_df.iloc[0:15]
 payer_code_sorted_df = payer_code_sorted_df.reset_index().\
-    rename(columns={'index': 'Payer Code', 'payer_code': 'Proportion'})
+    rename(columns={'payer_code': 'Payer Code', 'proportion': 'Proportion'})
 payer_code_sorted_df['Payer Code'] = \
     payer_code_sorted_df['Payer Code'].\
     astype('category')
@@ -45,8 +47,8 @@ medical_specialty_df = df['medical_specialty'].\
     value_counts(dropna=False, normalize=True)*100
 medical_specialty_df = medical_specialty_df.iloc[0:20]
 medical_specialty_df = medical_specialty_df.reset_index().\
-    rename(columns={'index': 'Medical Specialty',
-                    'medical_specialty': 'Proportion'})
+    rename(columns={'medical_specialty': 'Medical Specialty',
+                    'proportion': 'Proportion'})
 medical_specialty_df['Medical Specialty'] = \
     medical_specialty_df['Medical Specialty'].\
     astype('category')
@@ -54,9 +56,9 @@ medical_specialty_df['Medical Specialty'] = \
     medical_specialty_df['Medical Specialty'].\
     cat.add_categories('Null').fillna('Null')
 
-# print(f'missing_df: {missing_df}')
-# print(f'payer_code_sorted_df: {payer_code_sorted_df}')
-# print(f'medical_specialty_df: {medical_specialty_df}')
+# print(f'missing_df: {missing_df.head()}')
+# print(f'payer_code_sorted_df: {payer_code_sorted_df.head()}')
+# print(f'medical_specialty_df: {medical_specialty_df.head()}')
 
 df_list = [missing_df, medical_specialty_df, payer_code_sorted_df]
 title_list = ['Percentage of null values per feature',
