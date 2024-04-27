@@ -88,7 +88,7 @@ if use_models_that_prioritize_recall:
     model_dict = {
         'SVC': SVC(
             probability=True,
-            C=model_params['params_svc']['C'],
+            gamma=model_params['params_svc']['gamma'],
             random_state=model_params['params_svc']['random_state'],
             ),
         'AdaBoost classifier': AdaBoostClassifier(
