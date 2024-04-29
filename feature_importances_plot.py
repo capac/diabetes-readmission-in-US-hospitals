@@ -3,7 +3,6 @@
 from pathlib import Path
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 
@@ -17,14 +16,11 @@ df = pd.read_csv(work_dir / "data/df_encoded.csv")
 
 X = df.drop("readmitted", axis=1)
 y = df["readmitted"].copy()
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.3, random_state=42
-)
 
 rf_clf = RandomForestClassifier(
     n_jobs=-1, max_depth=16, n_estimators=160, random_state=42
 )
-rf_clf.fit(X_train, y_train)
+rf_clf.fit(X, y)
 std_err = np.std([tree.feature_importances_ for tree in rf_clf.estimators_],
                  axis=0)
 
