@@ -7,7 +7,8 @@ from time import time
 from datetime import timedelta
 import matplotlib.pyplot as plt
 from imblearn.under_sampling import RandomUnderSampler
-from sklearn.svm import SVC
+# from sklearn.svm import SVC
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.inspection import permutation_importance
 
 plt.style.use("boxplot-style.mplstyle")
@@ -41,18 +42,23 @@ with open('params.json', 'r') as f:
 rus = RandomUnderSampler(sampling_strategy='majority', random_state=0)
 X_resampled, y_resampled = rus.fit_resample(X, y)
 
-svc = SVC(
-    probability=True,
-    C=model_params['params_svc']['C'],
-    gamma=model_params['params_svc']['gamma'],
-    random_state=model_params['params_svc']['random_state'],
-)
+# svc = SVC(
+#     probability=True,
+#     C=model_params['params_svc']['C'],
+#     gamma=model_params['params_svc']['gamma'],
+#     random_state=model_params['params_svc']['random_state'],
+# )
 
-svc_clf = svc.fit(X_resampled, y_resampled)
-cols = svc_clf.feature_names_in_
-r = permutation_importance(svc_clf, X_resampled, y_resampled,
-                           scoring='accuracy', n_jobs=-1,
-                           random_state=42, n_repeats=10,)
+gbc = GradientBoostingClassifier(
+            learning_rate=model_params['params_gb']['learning_rate'],
+            random_state=model_params['params_gb']['random_state'],
+        )
+
+gbc_clf = gbc.fit(X_resampled, y_resampled)
+cols = gbc_clf.feature_names_in_
+r = permutation_importance(gbc_clf, X_resampled, y_resampled,
+                           scoring='balanced_accuracy', n_jobs=-1,
+                           random_state=42, n_repeats=25,)
 
 sorted_results_dict = {}
 for i in r.importances_mean.argsort()[::-1]:
