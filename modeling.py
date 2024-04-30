@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-from time import time
 from pathlib import Path
 import pandas as pd
 import numpy as np
 import json
+from time import time
+from datetime import timedelta
 from sklearn.compose import (make_column_selector,
                              make_column_transformer)
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -251,4 +252,7 @@ with open(work_dir / "stats_output.txt", "w") as f:
                                  cv=6, n_jobs=-1,)
         display_scores(name, -scores)
 
-print(f"Time elapsed: {(time() - t0):.2f} seconds")
+seconds_rounded = round(time() - t0)
+time_elapsed_in_secs = str(timedelta(seconds=seconds_rounded)).split(':')
+formatted_time = '{}h {}m {}s'.format(*time_elapsed_in_secs)
+print(f'Time elapsed: {formatted_time}.')
