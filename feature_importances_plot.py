@@ -3,6 +3,7 @@
 from pathlib import Path
 import pandas as pd
 import numpy as np
+from imblearn.under_sampling import RandomUnderSampler
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 
@@ -17,10 +18,13 @@ df = pd.read_csv(work_dir / "data/df_encoded.csv")
 X = df.drop("readmitted", axis=1)
 y = df["readmitted"].copy()
 
+rus = RandomUnderSampler(sampling_strategy="majority", random_state=0)
+X_resampled, y_resampled = rus.fit_resample(X, y)
+
 rf_clf = RandomForestClassifier(
     n_jobs=-1, max_depth=16, n_estimators=160, random_state=42
 )
-rf_clf.fit(X, y)
+rf_clf.fit(X_resampled, y_resampled)
 std_err = np.std([tree.feature_importances_ for tree in rf_clf.estimators_],
                  axis=0)
 
