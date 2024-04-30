@@ -7,7 +7,6 @@ from time import time
 from datetime import timedelta
 import matplotlib.pyplot as plt
 from imblearn.under_sampling import RandomUnderSampler
-# from sklearn.svm import SVC
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.inspection import permutation_importance
 
@@ -41,13 +40,6 @@ with open('params.json', 'r') as f:
 
 rus = RandomUnderSampler(sampling_strategy='majority', random_state=0)
 X_resampled, y_resampled = rus.fit_resample(X, y)
-
-# svc = SVC(
-#     probability=True,
-#     C=model_params['params_svc']['C'],
-#     gamma=model_params['params_svc']['gamma'],
-#     random_state=model_params['params_svc']['random_state'],
-# )
 
 gbc = GradientBoostingClassifier(
             learning_rate=model_params['params_gb']['learning_rate'],
