@@ -21,7 +21,7 @@ from sklearn.svm import SVC
 import matplotlib.pyplot as plt
 from matplotlib import ticker
 
-plt.style.use("lineplot-style.mplstyle")
+plt.style.use("style_files/lineplot-style.mplstyle")
 
 work_dir = Path.home() / 'Programming/Python/machine-learning-exercises/'\
                          'uci-ml-repository/diabetes-in-130-US-hospitals'

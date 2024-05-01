@@ -10,7 +10,7 @@ from imblearn.under_sampling import RandomUnderSampler
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.inspection import permutation_importance
 
-plt.style.use("boxplot-style.mplstyle")
+plt.style.use("style_files/boxplot-style.mplstyle")
 prop_cycle = plt.rcParams["axes.prop_cycle"]
 colors = prop_cycle.by_key()["color"]
 

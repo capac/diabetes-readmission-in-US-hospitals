@@ -9,7 +9,7 @@ column_length_in_px = 4
 nrows = 1
 ncols = 3
 
-plt.style.use("lineplot-style.mplstyle")
+plt.style.use("style_files/lineplot-style.mplstyle")
 
 
 def roc_curve_plot_with_auc(rates_dict, work_dir):

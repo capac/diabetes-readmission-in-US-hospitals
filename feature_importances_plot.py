@@ -7,7 +7,7 @@ from imblearn.under_sampling import RandomUnderSampler
 from sklearn.ensemble import RandomForestClassifier
 import matplotlib.pyplot as plt
 
-plt.style.use("barplot-style.mplstyle")
+plt.style.use("style_files/barplot-style.mplstyle")
 
 work_dir = (
     Path.home() / "Programming/Python/machine-learning-exercises/"
