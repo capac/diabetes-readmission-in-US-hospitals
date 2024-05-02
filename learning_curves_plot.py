@@ -103,7 +103,6 @@ if use_models_that_prioritize_recall:
             n_estimators=model_params['params_gb']['n_estimators'],
             learning_rate=model_params['params_gb']['learning_rate'],
             random_state=model_params['params_gb']['random_state'],
-            n_iter_no_change=10,
         ),
     }
 else:
