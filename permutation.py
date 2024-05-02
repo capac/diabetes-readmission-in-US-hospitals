@@ -44,6 +44,7 @@ X_resampled, y_resampled = rus.fit_resample(X, y)
 gbc = GradientBoostingClassifier(
             learning_rate=model_params['params_gb']['learning_rate'],
             random_state=model_params['params_gb']['random_state'],
+            n_iter_no_change=10,
         )
 
 gbc_clf = gbc.fit(X_resampled, y_resampled)
