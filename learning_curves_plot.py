@@ -103,6 +103,7 @@ if use_models_that_prioritize_recall:
             n_estimators=model_params['params_gb']['n_estimators'],
             learning_rate=model_params['params_gb']['learning_rate'],
             random_state=model_params['params_gb']['random_state'],
+            n_iter_no_change=10,
         ),
     }
 else:
@@ -147,15 +148,15 @@ for ax, (model_name, model_instance) in zip(axes.flatten(),
             linewidth=1, label='Training')
     ax.plot(train_sizes, val_scores_means, 'b.-',
             linewidth=1, label='Validation')
-    ax.legend(loc='best', fontsize=10)
+    ax.legend(loc='best', fontsize=9)
     if len(model_name) > 3:
         ax.set_title(f'ROC curve for {model_name.lower()}', fontsize=10)
     else:
         ax.set_title(f'ROC curve for {model_name.upper()}', fontsize=10)
     ticks = ticker.FuncFormatter(lambda x, _: '{0:g}'.format(x*1e-3))
     ax.xaxis.set_major_formatter(ticks)
-    ax.set_xlabel('Training examples (in units of $10^3$)', fontsize=9)
-    ax.set_ylabel('Accuracy', fontsize=9)
+    ax.set_xlabel('Training examples (in units of $10^3$)', fontsize=10)
+    ax.set_ylabel('Accuracy', fontsize=10)
     ax.set_ylim([0.532, 0.648])
     plt.setp(ax.get_xticklabels(), fontsize=8)
     plt.setp(ax.get_yticklabels(), fontsize=8)
