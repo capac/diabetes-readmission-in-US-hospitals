@@ -51,7 +51,7 @@ gbc_clf = gbc.fit(X_resampled, y_resampled)
 cols = gbc_clf.feature_names_in_
 r = permutation_importance(gbc_clf, X_resampled, y_resampled,
                            scoring='balanced_accuracy', n_jobs=-1,
-                           random_state=42, n_repeats=25,)
+                           random_state=42, n_repeats=50,)
 
 sorted_results_dict = {}
 for i in r.importances_mean.argsort()[::-1]:
@@ -59,16 +59,16 @@ for i in r.importances_mean.argsort()[::-1]:
         sorted_results_dict[cols[i]] = r.importances[i]
 
 # boxplot
-num = 12
+num_of_features = 12
 first_elements_from_dict = {key: value for i, (key, value) in
                             enumerate(sorted_results_dict.items())
-                            if i <= num}
+                            if i < num_of_features}
 fig, axes = plt.subplots(nrows=1, ncols=1)
 bplot = axes.boxplot(first_elements_from_dict.values(),
                      labels=first_elements_from_dict.keys(),
                      patch_artist=True)
-axes.set_xlabel('Features')
-axes.set_ylabel('Decrease in accuracy score')
+axes.set_xlabel('Features', fontsize=16)
+axes.set_ylabel('Decrease in accuracy score', fontsize=16)
 for patch, color in zip(bplot['boxes'], colors):
     patch.set_facecolor(color)
     patch.set_edgecolor('0.2')
@@ -76,7 +76,7 @@ for patch, color in zip(bplot['boxes'], colors):
 
 plt.setp(axes.get_xticklabels(), ha="right",
          rotation_mode="anchor", rotation=45)
-axes.set_title('Permutation importances of the top {} features'.format(num))
+axes.set_title('Permutation importances of the features')
 plt.savefig(work_dir / 'plots/permutation_importances.png')
 
 results_df = pd.DataFrame(dict(list(r.items())[:2]), index=cols)
