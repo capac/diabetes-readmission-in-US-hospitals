@@ -41,6 +41,10 @@ with open('params.json', 'r') as f:
 rus = RandomUnderSampler(sampling_strategy='majority', random_state=0)
 X_resampled, y_resampled = rus.fit_resample(X, y)
 
+# Not using 'n_estimators' to show more features in the permutation plot
+# while 'n_iter_no_change=10' limits the number of estimators. These extra
+# features have very low contribution but highlight the revelance of the
+# first two features, 'discharge_disposition_id' and 'service_use'.
 gbc = GradientBoostingClassifier(
             learning_rate=model_params['params_gb']['learning_rate'],
             random_state=model_params['params_gb']['random_state'],
